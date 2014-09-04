@@ -1,0 +1,155 @@
+﻿
+<div ng-controller="BuildMonitorCtrl">
+    <audio src="Views/Police Siren-SoundBible.com-878640712.wav" tm-audio="buildMonitor.playSiren" preload="auto"></audio>
+
+    <div class="error" ng-class="{'active': !buildMonitor.connected}" align="center">
+        Uh-oh. You seem to have lost your connection with the server.
+        <a ng-click="buildMonitor.connect()" ng-show="!buildMonitor.connecting">Retry</a>
+        <span ng-show="buildMonitor.connecting" style="font-style:italic">Connecting...</span>
+    </div>
+    <div class="error" ng-class="{'active': buildMonitor.serverError}" align="center">
+        Shoot, the server is having trouble finding the build information in TFS. The data you see on the screen may be a bit out of date. 
+        (This message will disappear as soon as the server sorts its issues out. Please be patient and extend your unconditional love and support during this challenging time. Thanks.)
+    </div>
+    
+
+    <div class="options" collapse="buildMonitor.collapseOptions">
+        <div class="row well">
+            <div class="col-sm-4">
+                Sort by:
+                <a ng-click="buildMonitor.sortBy('definition')">Build Definition</a> &nbsp;
+                <a ng-click="buildMonitor.sortBy('finishedTime')">Completed Time</a>
+            </div>
+            <div class="col-sm-4">
+                Group by:
+                <a ng-click="buildMonitor.groupBy('project')">Project</a> &nbsp;
+                <a ng-click="buildMonitor.groupBy('status')">Status</a> &nbsp;
+                <a ng-click="buildMonitor.groupBy('')">None</a>
+            </div>
+        </div>
+    </div>
+    <div align="center"><span ng-click="buildMonitor.collapseOptions=!buildMonitor.collapseOptions" class="collapseOptions-icon glyphicon" ng-class="buildMonitor.collapseOptions ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span></div>
+    <div class="main-section">
+        <div ng-repeat="group in buildMonitor.groups" class="group">
+            <div class="group-header" ng-show="buildMonitor.groups.length > 1">
+                {{group.name}}
+            </div>
+
+            <div ng-repeat="build in group.builds" ng-click="buildMonitor.openBuild(build)" class="build-block">
+                <div class="build" ng-class="{'failure': build.failed, 'success': build.succeeded, 'running': build.inProgress}">
+
+                    <div class="build-definition">
+                        <span class="glyphicon"
+                              ng-class="{'glyphicon-check': build.succeeded,
+                          'glyphicon-remove': build.failed,
+                          'glyphicon-download': build.inProgress}"></span>
+                        {{build.definition}}
+                    </div>
+                    <div>
+                        Runtime: {{build.runTime | tmTimeSpan }}
+                    </div>
+                    <div>
+                        <div ng-show="build.completed">
+                            Completed: {{build.finishedTime | acFormatDateTime}}
+                        </div>
+                        <div ng-show="build.inProgress">
+                            Started: {{build.startTime | acFormatDateTime}}
+                        </div>
+                    </div>
+                    <div>
+                        {{build.username | acFormatUsername}}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    a {
+        cursor: pointer;
+    }
+
+    .main-section {
+        padding: 100px;
+        padding-top: 0;
+    }
+
+    .collapseOptions-icon {
+        font-size: large;
+        opacity: .4;
+        cursor: pointer;
+    }
+
+    .options > .row.well {
+        margin-bottom: 0;
+    }
+
+    .collapseOptions-icon:hover {
+        opacity: .8;
+    }
+
+    .build-block {
+        float: left;
+    }
+
+    .group {
+        display: inline-table;
+    }
+
+    .group-header {
+        font-size: large;
+    }
+
+    .build {
+        /*float: left;*/
+        width: 300px;
+        border: 1px solid gray;
+        border-radius: 4px;
+        margin: 20px;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+        .build:hover {
+            background-color: lightblue;
+        }
+
+        .build.failure {
+            border-color: red;
+        }
+
+            .build.failure > .build-definition {
+                color: red;
+            }
+
+        .build.success > .build-definition {
+            color: green;
+        }
+
+        .build.running > .build-definition {
+            color: blue;
+        }
+
+    .build-definition {
+        font-size: large;
+    }
+
+    div.error.active {        
+        opacity: 1;
+        height: auto;
+        padding: 10px;
+    }
+
+    div.error {        
+        background-color: orange;
+        display: block;
+        -webkit-transition: opacity 1s ease-out;
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+    }
+</style>
