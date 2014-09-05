@@ -18,6 +18,9 @@ build/
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 !packages/*/build/
 
+# Enable "build/" folder in the TfsMonitor.Api folder, because it happens to be the name of a legitimate code folder
+!TfsMonitor.Api/build/
+
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*

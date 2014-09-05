@@ -170,7 +170,7 @@
     <Content Include="Views\Shared\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BuildMonitor\TfsMonitor.Api.csproj">
+    <ProjectReference Include="..\TfsMonitor.Api\TfsMonitor.Api.csproj">
       <Project>{31e52b31-a54e-461c-95c8-74453a7f3061}</Project>
       <Name>TfsMonitor.Api</Name>
     </ProjectReference>
