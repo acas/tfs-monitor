@@ -13,17 +13,20 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.0-beta.13/angular.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap.min.js"></script>
 
-    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>    
+    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    <!--tfs monitor relies on acas-libraries, which you can download and serve locally or host somewhere-->
     <script src="//localhost:8282/acas-libraries.js"></script>
 
-    <script src="Views/lib/jquery.signalR-2.1.1.min.js"></script>
-    <script src="signalr/hubs"></script>    
+
 
     <script>
         var app = angular.module('app', ['acas.angular'])
     </script>
 
+    <script>
+        tfsMonitor = { projectCollectionUrl : '@System.Configuration.ConfigurationManager.AppSettings["projectCollectionUrl"]' }
 
+    </script>
 
     @Scripts.Render("~/js")
 
@@ -31,6 +34,9 @@
 <body>
     <div ng-app="app">
         <ng-include src="'Views/BuildMonitor/BuildMonitor.html'" />
-    </div>    
+    </div>
+
+    <script src="Views/lib/jquery.signalR-2.1.1.min.js"></script>
+    <script src="signalr/hubs"></script>
 </body>
 </html>

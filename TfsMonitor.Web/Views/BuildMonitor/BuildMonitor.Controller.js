@@ -17,11 +17,18 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
 	function ($http, $scope, $window, $timeout) {
 		$scope.buildMonitor = new function () {
 
-			var reverse = false
-			var sortByField = 'definition'
-			var groupByField = 'project'
+			var options = {
+				reverse: false,
+				sortByField: 'definition',
+				groupByField: 'project',
+				collapseOptions: false
+			}
+
+			_.extend(options, JSON.parse(localStorage.getItem("tfs-monitor.buildMonitor.options")))
+
 			var connected = true //start off connected so that the user doesn't see an error before the initial connection is attempted			
 
+			
 			var utilities = {
 				loadData: function (data) {
 					$scope.$apply(function () {
@@ -31,15 +38,15 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
 				},
 
 				sort: function (data) {
-					data = _.sortBy(data, function (build) { return build[sortByField] })
-					if (reverse) {
+					data = _.sortBy(data, function (build) { return build[options.sortByField] })
+					if (options.reverse) {
 						data.reverse()
 					}
 					return data
 				},
 
 				group: function (data) {
-					var object = _.groupBy(data, function (build) { return build[groupByField] })
+					var object = _.groupBy(data, function (build) { return build[options.groupByField] })
 					var result = []
 					for (var prop in object) {
 						result.push({ name: prop, builds: object[prop] })
@@ -110,9 +117,10 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
 			var api = {
 
 
-				reverse: reverse,
-				sortByField: sortByField,
-				groupByField: groupByField,
+				reverse: options.reverse,
+				sortByField: options.sortByField,
+				groupByField: options.groupByField,
+				collapseOptions: options.collapseOptions,
 				connected: connected,
 
 				connect: function () {
@@ -121,26 +129,33 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
 
 
 				sortBy: function (sortBy) {
-					if (sortBy === sortByField) {
-						reverse = !reverse
+					if (sortBy === options.sortByField) {
+						options.reverse = !options.reverse
 					}
-					sortByField = sortBy
+					options.sortByField = sortBy
 					var data = _.flatten(_.map(api.groups, function (x) { return x.builds }))
 					api.groups = utilities.group(utilities.sort(data))
+					localStorage.setItem("tfs-monitor.buildMonitor.options", angular.toJson(options))
+
 				},
 
 				groupBy: function (groupBy) {
-					groupByField = groupBy
+					options.groupByField = groupBy
 					var data = _.flatten(_.map(api.groups, function (x) { return x.builds }))
 					api.groups = utilities.group(utilities.sort(data))
+					localStorage.setItem("tfs-monitor.buildMonitor.options", angular.toJson(options))
+
 				},
 
-
+				toggleCollapseOptions: function(){
+					options.collapseOptions = !options.collapseOptions
+					localStorage.setItem("tfs-monitor.buildMonitor.options", angular.toJson(options))
+				},
 
 
 				openBuild: function (build) {
 					var buildNumber = build.buildUri.split('/')[5]
-					$window.open('https://tfs.americancapital.com/tfs/ACASProjects/' + build.project + '/_build#buildUri=vstfs%3A%2F%2F%2FBuild%2FBuild%2F' + buildNumber + '&_a=summary')
+					$window.open(tfsMonitor.projectCollectionUrl + '/' + build.project + '/_build#buildUri=vstfs%3A%2F%2F%2FBuild%2FBuild%2F' + buildNumber + '&_a=summary')
 				}
 			}
 

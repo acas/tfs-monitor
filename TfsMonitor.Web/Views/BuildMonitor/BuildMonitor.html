@@ -28,7 +28,7 @@
             </div>
         </div>
     </div>
-    <div align="center"><span ng-click="buildMonitor.collapseOptions=!buildMonitor.collapseOptions" class="collapseOptions-icon glyphicon" ng-class="buildMonitor.collapseOptions ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span></div>
+    <div align="center"><span ng-click="buildMonitor.toggleCollapseOptions()" class="collapseOptions-icon glyphicon" ng-class="buildMonitor.collapseOptions ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span></div>
     <div class="main-section">
         <div ng-repeat="group in buildMonitor.groups" class="group">
             <div class="group-header" ng-show="buildMonitor.groups.length > 1">
@@ -45,15 +45,13 @@
                           'glyphicon-download': build.inProgress}"></span>
                         {{build.definition}}
                     </div>
-                    <div>
-                        Runtime: {{build.runTime | tmTimeSpan }}
-                    </div>
+                    
                     <div>
                         <div ng-show="build.completed">
-                            Completed: {{build.finishedTime | acFormatDateTime}}
+                            Completed: {{build.finishedTime | acFormatDateTime}} ({{build.runTime | tmTimeSpan }})
                         </div>
                         <div ng-show="build.inProgress">
-                            Started: {{build.startTime | acFormatDateTime}}
+                            Started: {{build.startTime | acFormatDateTime}} ({{build.runTime | tmTimeSpan }})
                         </div>
                     </div>
                     <div>
