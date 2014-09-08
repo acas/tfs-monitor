@@ -13,7 +13,7 @@
     </div>
     
 
-    <div class="options" collapse="buildMonitor.collapseOptions">
+    <div class="options" collapse="buildMonitor.options.collapseOptions">
         <div class="row well">
             <div class="col-sm-4">
                 Sort by:
@@ -28,7 +28,7 @@
             </div>
         </div>
     </div>
-    <div align="center"><span ng-click="buildMonitor.toggleCollapseOptions()" class="collapseOptions-icon glyphicon" ng-class="buildMonitor.collapseOptions ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span></div>
+    <div align="center"><span ng-click="buildMonitor.toggleCollapseOptions()" class="collapseOptions-icon glyphicon" ng-class="buildMonitor.options.collapseOptions ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span></div>
     <div class="main-section">
         <div ng-repeat="group in buildMonitor.groups" class="group">
             <div class="group-header" ng-show="buildMonitor.groups.length > 1">

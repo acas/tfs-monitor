@@ -24,7 +24,7 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
 				collapseOptions: false
 			}
 
-			_.extend(options, JSON.parse(localStorage.getItem("tfs-monitor.buildMonitor.options")))
+			_.extend(options, JSON.parse($window.localStorage.getItem("tfs-monitor.buildMonitor.options")))
 
 			var connected = true //start off connected so that the user doesn't see an error before the initial connection is attempted			
 
@@ -114,13 +114,8 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
 				}
 			}
 
-			var api = {
-
-
-				reverse: options.reverse,
-				sortByField: options.sortByField,
-				groupByField: options.groupByField,
-				collapseOptions: options.collapseOptions,
+			var api = {												
+				options: options,				
 				connected: connected,
 
 				connect: function () {
@@ -135,7 +130,7 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
 					options.sortByField = sortBy
 					var data = _.flatten(_.map(api.groups, function (x) { return x.builds }))
 					api.groups = utilities.group(utilities.sort(data))
-					localStorage.setItem("tfs-monitor.buildMonitor.options", angular.toJson(options))
+					$window.localStorage.setItem("tfs-monitor.buildMonitor.options", angular.toJson(options))
 
 				},
 
@@ -143,13 +138,13 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
 					options.groupByField = groupBy
 					var data = _.flatten(_.map(api.groups, function (x) { return x.builds }))
 					api.groups = utilities.group(utilities.sort(data))
-					localStorage.setItem("tfs-monitor.buildMonitor.options", angular.toJson(options))
+					$window.localStorage.setItem("tfs-monitor.buildMonitor.options", angular.toJson(options))
 
 				},
 
 				toggleCollapseOptions: function(){
 					options.collapseOptions = !options.collapseOptions
-					localStorage.setItem("tfs-monitor.buildMonitor.options", angular.toJson(options))
+					$window.localStorage.setItem("tfs-monitor.buildMonitor.options", angular.toJson(options))
 				},
 
 
