@@ -157,5 +157,4 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
-/TfsMonitor.Web/Web.Debug.config
-/TfsMonitor.Web/Web.Release.config
+/TfsMonitor.Web/Web.Private.config

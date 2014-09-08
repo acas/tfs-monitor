@@ -1,8 +1,14 @@
 tfs-monitor
 ===========
 
-For monitoring TFS - builds monitor, work items, etc. Useful for the big screen in the hallway or developers' desktops
+For monitoring TFS - builds monitor, work items, etc. Useful for the big screen in the hallway or developers' desktops. A work in progress, the TFS Monitor currently only monitors builds. It is rough around the edges, but should work. Mostly.
 
 Usage
 --------
-When cloning the repository, you may notice that the TfsMonitor.Web project is missing the transform files Web.Debug.config and Web.Release.config that are referenced in the .csproj file. They are not required - but you'll need to fill in the `projectCollectionUrl` value in the Web.config if it's not replaced by a value in the transforms. 
+When cloning the repository, you will need to add a file next to the `Web.config` called `Web.Private.config`. The file should have the location of your TFS project collection: 
+
+```
+	<appSettings>
+	  <add key="projectCollectionUrl" value="https://mytfssite.com/MyProjectCollection" />
+	</appSettings>
+```
