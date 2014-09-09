@@ -51,6 +51,9 @@ namespace TfsMonitor.Api.Build
 					case "Failed":
 						status = "Failed";
 						break;
+					case "NotStarted":
+						status = "Queued";
+						break;
 					default:
 						status = value;
 						break;

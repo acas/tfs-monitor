@@ -13,8 +13,8 @@
 })
 
 
-app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
-	function ($http, $scope, $window, $timeout) {
+app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout', '$interval',
+	function ($http, $scope, $window, $timeout, $interval) {
 		$scope.buildMonitor = new function () {
 
 			var options = {
@@ -28,10 +28,26 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
 
 			var connected = true //start off connected so that the user doesn't see an error before the initial connection is attempted			
 
-			
+
 			var utilities = {
+				intervals : [],
 				loadData: function (data) {
-					$scope.$apply(function () {
+					//the way this function handles keeping track of the time of running builds is a mess, I really don't like it. Look for a better way to do it.
+					_.each(utilities.intervals, function (interval) {
+						$interval.cancel(interval)
+					})
+					utilities.intervals = []
+					$scope.$apply(function () {																		
+						_.each(data, function (build) {
+							if (build.inProgress) {
+								build.runningTime = new Date() - acas.utility.parser.toDate(build.startTime)
+								utilities.intervals.push($interval(
+									function () {
+										build.runningTime += 1000
+									}, 1000)
+								)
+							}
+						})
 						api.groups = utilities.group(utilities.sort(data))
 						api.serverError = false
 					})
@@ -59,7 +75,7 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
 					utilities.connect(true)
 				},
 
-				setConnectionState: function(connected, connecting, serverError){
+				setConnectionState: function (connected, connecting, serverError) {
 					$timeout(function () {
 						$scope.$apply(function () {
 							api.serverError = serverError
@@ -114,8 +130,8 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
 				}
 			}
 
-			var api = {												
-				options: options,				
+			var api = {
+				options: options,
 				connected: connected,
 
 				connect: function () {
@@ -142,7 +158,7 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout',
 
 				},
 
-				toggleCollapseOptions: function(){
+				toggleCollapseOptions: function () {
 					options.collapseOptions = !options.collapseOptions
 					$window.localStorage.setItem("tfs-monitor.buildMonitor.options", angular.toJson(options))
 				},

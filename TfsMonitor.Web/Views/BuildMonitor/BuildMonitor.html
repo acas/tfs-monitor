@@ -51,7 +51,7 @@
                             Completed: {{build.finishedTime | acFormatDateTime}} ({{build.runTime | tmTimeSpan }})
                         </div>
                         <div ng-show="build.inProgress">
-                            Started: {{build.startTime | acFormatDateTime}} ({{build.runTime | tmTimeSpan }})
+                            Started: {{build.startTime | acFormatDateTime}} ({{build.runningTime | tmTimeSpan }})
                         </div>
                     </div>
                     <div>

@@ -79,8 +79,7 @@ namespace TfsMonitor.Api.Build
 					};
 					BuildStatuses.Add(build);
 				}
-			}
-
+			}			
 		}
 
 		/// <summary>
