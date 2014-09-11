@@ -10,42 +10,63 @@ namespace TfsMonitor.Api.Build
 {
 	public class BuildMonitor
 	{		
-		private List<Build> BuildStatuses = new List<Build>();
+		
+		private List<Build> BuildStatuses;
+		
+		private System.Text.RegularExpressions.Regex ProjectRegex;
+		private bool ProjectRegexExists;
+
+		private System.Text.RegularExpressions.Regex DefinitionRegex;		
+		private bool DefinitionRegexExists;
+
+		private IBuildServer BuildServer;
+		private TfsTeamProjectCollection TeamProjectCollection;
+		public BuildMonitor()
+		{
+			BuildStatuses = new List<Build>();
+
+			ProjectRegex = new System.Text.RegularExpressions.Regex("");
+			string projectRegexExpression = System.Configuration.ConfigurationManager.AppSettings["buildDefinitionProjectRegex"];
+			ProjectRegexExists = projectRegexExpression != null;
+			if (ProjectRegexExists)
+			{
+				ProjectRegex = new System.Text.RegularExpressions.Regex(projectRegexExpression);
+			}
+
+			DefinitionRegex = new System.Text.RegularExpressions.Regex("");
+			string definitionRegexExpression = System.Configuration.ConfigurationManager.AppSettings["buildDefinitionRegex"];
+			DefinitionRegexExists = definitionRegexExpression != null;
+			if (DefinitionRegexExists)
+			{
+				DefinitionRegex = new System.Text.RegularExpressions.Regex(definitionRegexExpression);
+			}
+
+			string projectCollectionUrl = System.Configuration.ConfigurationManager.AppSettings["projectCollectionUrl"];
+			TeamProjectCollection = new TfsTeamProjectCollection(new Uri(projectCollectionUrl));						
+			BuildServer = (IBuildServer)TeamProjectCollection.GetService(typeof(IBuildServer));
+			
+		}
+
 		private void UpdateBuildStatus()
 		{
-			string projectCollectionUrl = System.Configuration.ConfigurationManager.AppSettings["projectCollectionUrl"].ToString();			
-			TfsTeamProjectCollection tfs = new TfsTeamProjectCollection(new Uri(projectCollectionUrl));						
-			TeamProject[] teamProjects = tfs.GetService<VersionControlServer>().GetAllTeamProjects(true);
-			IBuildServer buildServer = (IBuildServer)tfs.GetService(typeof(IBuildServer));
-
-			//todo perhaps we can use this and def.LastBuildUri together to speed up the process?
-			//def.LastBuildUri only contains completed builds, but is much faster than the query
-			//List<Uri> runningBuildDefinitions = new List<Uri>();
-			//IQueuedBuildSpec qbSpec = buildServer.CreateBuildQueueSpec("*", "*");
-			//var queuedBuilds = buildServer.QueryQueuedBuilds(qbSpec);
-			//foreach (var build in queuedBuilds.QueuedBuilds)
-			//{
-			//	runningBuildDefinitions.Add(build.BuildDefinitionUri);
-			//	Build b = new Build()
-			//	{
-
-			//	};
-			//}
-
+			
+			TeamProject[] teamProjects = TeamProjectCollection.GetService<VersionControlServer>().GetAllTeamProjects(true);
+			
 			List<Uri> newUris = new List<Uri>();
-			foreach (TeamProject proj in teamProjects)
+					
+			foreach (TeamProject proj in teamProjects.Where(p => !ProjectRegexExists || ProjectRegex.Match(p.Name).Success))
 			{
-				var defs = buildServer.QueryBuildDefinitions(proj.Name);
-				foreach (IBuildDefinition def in defs)
+				var defs = BuildServer.QueryBuildDefinitions(proj.Name);
+				foreach (IBuildDefinition def in defs.Where(d => !DefinitionRegexExists  || DefinitionRegex.Match(d.Name).Success))
 				{
-					IBuildDetailSpec spec = buildServer.CreateBuildDetailSpec(proj.Name, def.Name);
+					IBuildDetailSpec spec = BuildServer.CreateBuildDetailSpec(proj.Name, def.Name);
 					spec.QueryOptions = QueryOptions.None;
 					spec.QueryDeletedOption = QueryDeletedOption.ExcludeDeleted;
 					spec.InformationTypes = new string[] { };
 					spec.MaxBuildsPerDefinition = 1;
 					spec.QueryOrder = BuildQueryOrder.FinishTimeDescending;
 
-					var builds = buildServer.QueryBuilds(spec);
+					var builds = BuildServer.QueryBuilds(spec);
 					if (builds.Builds.Length > 0)
 					{
 						var buildDetail = builds.Builds[0];
@@ -59,7 +80,7 @@ namespace TfsMonitor.Api.Build
 			}
 			if (newUris.Count > 0)
 			{
-				var builds = buildServer.QueryBuildsByUri(newUris.ToArray(), new string[] { }, QueryOptions.All);
+				var builds = BuildServer.QueryBuildsByUri(newUris.ToArray(), new string[] { }, QueryOptions.All);
 
 				foreach (IBuildDetail buildDetail in builds)
 				{
