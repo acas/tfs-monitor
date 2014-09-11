@@ -13,9 +13,9 @@ namespace TfsMonitor.Api.Build
 		private List<Build> BuildStatuses = new List<Build>();
 		private void UpdateBuildStatus()
 		{
-			string projectCollectionUrl = System.Configuration.ConfigurationManager.AppSettings["projectCollectionUrl"].ToString();
-			TfsTeamProjectCollection tfs = new TfsTeamProjectCollection(new Uri(projectCollectionUrl));
-			var teamProjects = tfs.GetService<VersionControlServer>().GetAllTeamProjects(true);
+			string projectCollectionUrl = System.Configuration.ConfigurationManager.AppSettings["projectCollectionUrl"].ToString();			
+			TfsTeamProjectCollection tfs = new TfsTeamProjectCollection(new Uri(projectCollectionUrl));						
+			TeamProject[] teamProjects = tfs.GetService<VersionControlServer>().GetAllTeamProjects(true);
 			IBuildServer buildServer = (IBuildServer)tfs.GetService(typeof(IBuildServer));
 
 			//todo perhaps we can use this and def.LastBuildUri together to speed up the process?

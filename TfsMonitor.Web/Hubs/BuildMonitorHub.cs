@@ -60,9 +60,9 @@ namespace SignalRChat
 					}
 					Thread.Sleep(2000);			
 				}
-				catch
+				catch (Exception ex)
 				{
-					NotifyError();
+					NotifyError(ex);
 					lastCheck = new List<Build>(); //reset the lastCheck so that next time around, it'll try to broadcast if no errors are shown. This will clear the error 
 					//message on the client
 				}
@@ -74,9 +74,9 @@ namespace SignalRChat
 			Clients.All.sendData(data);
 		}
 
-		public void NotifyError()
+		public void NotifyError(Exception ex)
 		{
-			Clients.All.notifyError();
+			Clients.All.notifyError(ex);
 		}
 	}
 

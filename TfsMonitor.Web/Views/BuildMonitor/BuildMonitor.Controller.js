@@ -92,11 +92,11 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout', '$
 						var hub = jQuery.connection.buildMonitorHub
 						hub.client.sendData = function (data) {
 							utilities.loadData(data)
-						}
-
-						hub.client.notifyError = function () {
+						}						
+						hub.client.notifyError = function (ex) {
 							//if we're getting a server error, we must be connected
 							utilities.setConnectionState(true, false, true)
+							console.error(ex)
 						}
 
 						try {
@@ -110,15 +110,16 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout', '$
 									//clear server error, set it to connected. if the server error occurs it'll come back
 									utilities.setConnectionState(true, false, false)
 								})
-								.fail(function () {
+								.fail(function (ex) {
 									//set connected = false
 									//clear server error, we don't even have a connection so server error is irrelevant now
 									utilities.setConnectionState(false, false, false)
+									console.error(ex)
 								})
 
 						}
 						catch (ex) {
-
+							console.error(ex)
 						}
 						jQuery.connection.hub.disconnected(function () {
 							utilities.setConnectionState(false, false, false)
