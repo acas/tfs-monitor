@@ -17,11 +17,11 @@ Optionally, you can add:
 For example:
 
 ```
-	<appSettings>
-	  <add key="projectCollectionUrl" value="https://mytfssite.com/MyProjectCollection" />	
-	  <add key="acasLibrariesPath"    value="//cdn.mysite.com/acas-libraries.js" />	
+      <appSettings>
+          <add key="projectCollectionUrl" value="https://mytfssite.com/MyProjectCollection" />	
+          <add key="acasLibrariesPath"    value="//cdn.mysite.com/acas-libraries.js" />	
           <add key="projectRegex"    value="MyProject" />	
-	</appSettings>
+      </appSettings>
 ```
 
 
