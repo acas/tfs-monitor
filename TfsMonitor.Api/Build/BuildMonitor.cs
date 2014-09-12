@@ -8,31 +8,21 @@ using System.Linq;
 
 namespace TfsMonitor.Api.Build
 {
-	public class BuildMonitor
+	public class BuildMonitor:Monitor
 	{		
 		
 		private List<Build> BuildStatuses;
 		
-		private System.Text.RegularExpressions.Regex ProjectRegex;
-		private bool ProjectRegexExists;
-
 		private System.Text.RegularExpressions.Regex DefinitionRegex;		
 		private bool DefinitionRegexExists;
 
 		private IBuildServer BuildServer;
-		private TfsTeamProjectCollection TeamProjectCollection;
+
 		public BuildMonitor()
 		{
 			BuildStatuses = new List<Build>();
 
-			ProjectRegex = new System.Text.RegularExpressions.Regex("");
-			string projectRegexExpression = System.Configuration.ConfigurationManager.AppSettings["buildDefinitionProjectRegex"];
-			ProjectRegexExists = projectRegexExpression != null;
-			if (ProjectRegexExists)
-			{
-				ProjectRegex = new System.Text.RegularExpressions.Regex(projectRegexExpression);
-			}
-
+			
 			DefinitionRegex = new System.Text.RegularExpressions.Regex("");
 			string definitionRegexExpression = System.Configuration.ConfigurationManager.AppSettings["buildDefinitionRegex"];
 			DefinitionRegexExists = definitionRegexExpression != null;
@@ -40,9 +30,7 @@ namespace TfsMonitor.Api.Build
 			{
 				DefinitionRegex = new System.Text.RegularExpressions.Regex(definitionRegexExpression);
 			}
-
-			string projectCollectionUrl = System.Configuration.ConfigurationManager.AppSettings["projectCollectionUrl"];
-			TeamProjectCollection = new TfsTeamProjectCollection(new Uri(projectCollectionUrl));						
+			
 			BuildServer = (IBuildServer)TeamProjectCollection.GetService(typeof(IBuildServer));
 			
 		}

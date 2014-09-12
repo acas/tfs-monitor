@@ -15,7 +15,7 @@
 
     <script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
     <!--tfs monitor relies on acas-libraries, which you can download and serve locally or host somewhere-->
-    <script src="//localhost:8282/acas-libraries.js"></script>
+    <script src="@System.Configuration.ConfigurationManager.AppSettings["acasLibrariesPath"]"></script>
 
 
 
