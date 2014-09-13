@@ -18,12 +18,20 @@ namespace TfsMonitor.Api.Work
 	{
 		private WorkItemStore workItemStore;
 
+		private struct Iteration
+		{
+			public string Project;
+			public string Path;
+			public DateTime StartDate;
+			public DateTime EndDate;
+		}
+
 		public WorkMonitor()
 		{
 			workItemStore = (WorkItemStore)TeamProjectCollection.GetService(typeof(WorkItemStore));
 		}
 
-		private void FindCurrentIterations(ICommonStructureService4 css, string uri, List<object> result)
+		private void FindCurrentIterations(ICommonStructureService4 css, string uri, List<Iteration> result)
 		{
 
 			NodeInfo[] structures = css.ListStructures(uri);
@@ -33,7 +41,7 @@ namespace TfsMonitor.Api.Work
 
 			if (iterations != null)
 			{
-				string projectName = css.GetProject(uri).Name;				
+				string projectName = css.GetProject(uri).Name;
 				FindCurrentIterations(iterationsTree.ChildNodes[0], projectName, result);
 			}
 		}
@@ -46,7 +54,7 @@ namespace TfsMonitor.Api.Work
 		/// <param name="node">The root node to look for iterations in</param>
 		/// <param name="projectName">The project to search in</param>
 		/// <param name="result">The list the found iteration is to be added to.</param>
-		private void FindCurrentIterations(System.Xml.XmlNode node, string projectName, List<object> result)
+		private void FindCurrentIterations(System.Xml.XmlNode node, string projectName, List<Iteration> result)
 		{
 			//check if the project is already in the result, if it is return
 
@@ -69,7 +77,7 @@ namespace TfsMonitor.Api.Work
 					if (!string.IsNullOrEmpty(strStartDate) && !string.IsNullOrEmpty(strEndDate)
 						&& datesValid && startDate <= DateTime.Now && endDate >= DateTime.Now)
 					{
-						result.Add(new
+						result.Add(new Iteration()
 						{
 							Project = projectName,
 							Path = iterationPath.Replace(string.Concat("\\", projectName, "\\Iteration"), projectName),
@@ -87,7 +95,7 @@ namespace TfsMonitor.Api.Work
 							{
 								FindCurrentIterations(node.ChildNodes[0].ChildNodes[nChild], projectName, result);
 							}
-								
+
 						}
 					}
 
@@ -107,36 +115,48 @@ namespace TfsMonitor.Api.Work
 		{
 
 			var css = TeamProjectCollection.GetService<ICommonStructureService4>();
-			var currentIterations = new List<object>();
+			var currentIterations = new List<Iteration>();
+
+			var result = new List<object>();
 			foreach (var project in workItemStore.Projects.Cast<Project>().Where(p => !ProjectRegexExists || ProjectRegex.IsMatch(p.Name)))
 			{
 				FindCurrentIterations(css, project.Uri.ToString(), currentIterations);
-			}
 
-			// Run a query.
-			var result = new List<object>();
-			WorkItemCollection queryResults = workItemStore.Query(
-			   @"Select Id, Title, System.TeamProject, State, [Assigned To]
-			     From WorkItems 
-			     Where 
-					[Work Item Type] in ('Bug' , 'Product Backlog Item') 
-					and State <> 'Done' and State <> 'Closed' and State <> 'Removed'
-					and System.TeamProject = 'WebPort' and System.IterationPath = 'WebPort\WebPort 3.0 Beta\Sprint 13'"
-			   );
 
-			//List<WorkItem> result = new List<WorkItem>();
-			foreach (Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem workItem in queryResults)
-			{
-				result.Add(new WorkItem()
+				Dictionary<string, string> parameters = new Dictionary<string, string>();
+
+				parameters.Add("Project", project.Name);
+				string iterationPath = currentIterations.Where(i => i.Project == project.Name).SingleOrDefault().Path;
+				if (iterationPath != null)
 				{
-					Title = workItem.Title,
-					Project = workItem.Project.Name,
-					WorkItemID = workItem.Id,
-					State = workItem.State,
-					Assignee = workItem.Fields["Assigned To"].Value.ToString()
-				});
+					parameters.Add("IterationPath", iterationPath);
 
+					WorkItemCollection queryResults = workItemStore.Query(
+					   @"Select Id, Title, System.TeamProject, State, [Assigned To]
+						From WorkItems 
+						Where 
+						[Work Item Type] in ('Bug' , 'Product Backlog Item') 
+						and State <> 'Done' and State <> 'Closed' and State <> 'Removed'
+						and System.TeamProject = @Project and System.IterationPath = @IterationPath",
+							parameters
+					   );
+
+					//List<WorkItem> result = new List<WorkItem>();
+					foreach (Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem workItem in queryResults)
+					{
+						result.Add(new WorkItem()
+						{
+							Title = workItem.Title,
+							Project = workItem.Project.Name,
+							WorkItemID = workItem.Id,
+							State = workItem.State,
+							Assignee = workItem.Fields["Assigned To"].Value.ToString()
+						});
+
+					}
+				}
 			}
+
 			return result;
 		}
 
