@@ -1,7 +1,7 @@
-tfs-monitor
+TFS Monitor
 ===========
 
-For monitoring TFS - builds monitor, work items, etc. Useful for the big screen in the hallway or developers' desktops. A work in progress, the TFS Monitor currently only monitors builds. It is rough around the edges, but should work. Mostly.
+TFS Monitor monitors builds (continuous integration and manual), work items and sprints. Useful both for developers' desktops and the big screen in the hallway or central location. It is rough around the edges, and the work monitor doesn't function yet, but the build monitor should work. Mostly, anyway.
 
 Usage
 --------
