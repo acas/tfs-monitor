@@ -8,18 +8,30 @@ using System.Linq;
 
 namespace TfsMonitor.Api
 {
-	public class Monitor
+	/// <summary>
+	/// Abstract class defining access to the TFS model
+	/// TODO should this perhaps not be abstract? We could create it once and use DI to get it into the individual monitors
+	/// </summary>
+	public abstract class Monitor
 	{
-
+		/// <summary>
+		/// The TfsTeamProjectCollection object used to access the TFS server
+		/// </summary>
 		protected TfsTeamProjectCollection TeamProjectCollection;
-		private string projectCollectionUrl = System.Configuration.ConfigurationManager.AppSettings["projectCollectionUrl"];
+		private string projectCollectionUrl;
 
+		/// <summary>
+		/// Regular Expression determining which TFS Team Projects are considered by the monitors.
+		/// </summary>
 		protected System.Text.RegularExpressions.Regex ProjectRegex;
+		/// <summary>
+		/// Gets whether or not a ProjectRegex is specified. If it's not, all projects are used.
+		/// </summary>
 		protected bool ProjectRegexExists;
 
 		public Monitor()
 		{
-
+			projectCollectionUrl = System.Configuration.ConfigurationManager.AppSettings["projectCollectionUrl"];
 
 			ProjectRegex = new System.Text.RegularExpressions.Regex("");
 			string projectRegexExpression = System.Configuration.ConfigurationManager.AppSettings["projectRegex"];

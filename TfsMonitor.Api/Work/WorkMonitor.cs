@@ -23,7 +23,7 @@ namespace TfsMonitor.Api.Work
 			workItemStore = (WorkItemStore)TeamProjectCollection.GetService(typeof(WorkItemStore));
 		}
 
-		private void FindCurrentIteration(ICommonStructureService4 css, string uri, List<object> result)
+		private void FindCurrentIterations(ICommonStructureService4 css, string uri, List<object> result)
 		{
 
 			NodeInfo[] structures = css.ListStructures(uri);
@@ -33,15 +33,22 @@ namespace TfsMonitor.Api.Work
 
 			if (iterations != null)
 			{
-				string projectName = css.GetProject(uri).Name;
-				result.Add(iterations);
-				FindCurrentIteration(iterationsTree.ChildNodes[0], projectName, result);
+				string projectName = css.GetProject(uri).Name;				
+				FindCurrentIterations(iterationsTree.ChildNodes[0], projectName, result);
 			}
 		}
 
-		private static void FindCurrentIteration(System.Xml.XmlNode node, string projectName, List<object> result)
+		/// <summary>
+		/// Recursively searches the iteration XmlNode for an iteration in the specified project that 
+		/// has a start date before today and an end date after today (inclusive). Stops after the first 
+		/// iteration that passes those criteria is found. The iteration is added to the result list.
+		/// </summary>
+		/// <param name="node">The root node to look for iterations in</param>
+		/// <param name="projectName">The project to search in</param>
+		/// <param name="result">The list the found iteration is to be added to.</param>
+		private void FindCurrentIterations(System.Xml.XmlNode node, string projectName, List<object> result)
 		{
-
+			//check if the project is already in the result, if it is return
 
 			if (node != null)
 			{
@@ -54,40 +61,42 @@ namespace TfsMonitor.Api.Work
 
 					DateTime startDate = DateTime.Now;
 					DateTime endDate = DateTime.Now;
+					bool datesValid = true;
 
-					if (!string.IsNullOrEmpty(strStartDate) && !string.IsNullOrEmpty(strEndDate))
+					// Both dates should be valid.
+					datesValid = DateTime.TryParse(strStartDate, out startDate) && DateTime.TryParse(strEndDate, out endDate);
+
+					if (!string.IsNullOrEmpty(strStartDate) && !string.IsNullOrEmpty(strEndDate)
+						&& datesValid && startDate <= DateTime.Now && endDate >= DateTime.Now)
 					{
-						bool datesValid = true;
-
-						// Both dates should be valid.
-						datesValid = DateTime.TryParse(strStartDate, out startDate) && DateTime.TryParse(strEndDate, out endDate);
-						if (datesValid && startDate <= DateTime.Now && endDate >= DateTime.Now)
+						result.Add(new
 						{
-							result.Add(new
-							{
-								Project = projectName,
-								Path = iterationPath.Replace(string.Concat("\\", projectName, "\\Iteration"), projectName),
-								StartDate = startDate,
-								EndDate = endDate
-							});
-						}
-						else
-						{
-							// Visit any child nodes (sub-iterations).
-							if (node.FirstChild != null)
-							{
-								// The first child node is the <Children> tag, which we'll skip.
-								for (int nChild = 0; nChild < node.ChildNodes[0].ChildNodes.Count; nChild++)
-									FindCurrentIteration(node.ChildNodes[0].ChildNodes[nChild], projectName, result);
-							}
-						}
-
+							Project = projectName,
+							Path = iterationPath.Replace(string.Concat("\\", projectName, "\\Iteration"), projectName),
+							StartDate = startDate,
+							EndDate = endDate
+						});
 					}
+					else
+					{
+						// Visit any child nodes (sub-iterations).
+						if (node.FirstChild != null)
+						{
+							// The first child node is the <Children> tag, which we'll skip.
+							for (int nChild = 0; nChild < node.ChildNodes[0].ChildNodes.Count; nChild++)
+							{
+								FindCurrentIterations(node.ChildNodes[0].ChildNodes[nChild], projectName, result);
+							}
+								
+						}
+					}
+
+
 
 
 				}
 
-				
+
 			}
 		}
 
@@ -99,20 +108,20 @@ namespace TfsMonitor.Api.Work
 
 			var css = TeamProjectCollection.GetService<ICommonStructureService4>();
 			var currentIterations = new List<object>();
-			foreach (var project in workItemStore.Projects.Cast<Project>().Where(p => !ProjectRegexExists || ProjectRegex.Match(p.Name).Success))
+			foreach (var project in workItemStore.Projects.Cast<Project>().Where(p => !ProjectRegexExists || ProjectRegex.IsMatch(p.Name)))
 			{
-				FindCurrentIteration(css, project.Uri.ToString(), currentIterations);				
+				FindCurrentIterations(css, project.Uri.ToString(), currentIterations);
 			}
 
 			// Run a query.
 			var result = new List<object>();
 			WorkItemCollection queryResults = workItemStore.Query(
-			   @"Select Id, Title, System.TeamProject, State, [Assigned To], IterationId
+			   @"Select Id, Title, System.TeamProject, State, [Assigned To]
 			     From WorkItems 
 			     Where 
 					[Work Item Type] in ('Bug' , 'Product Backlog Item') 
 					and State <> 'Done' and State <> 'Closed' and State <> 'Removed'
-					and System.TeamProject = 'WebPort'"
+					and System.TeamProject = 'WebPort' and System.IterationPath = 'WebPort\WebPort 3.0 Beta\Sprint 13'"
 			   );
 
 			//List<WorkItem> result = new List<WorkItem>();
@@ -126,23 +135,9 @@ namespace TfsMonitor.Api.Work
 					State = workItem.State,
 					Assignee = workItem.Fields["Assigned To"].Value.ToString()
 				});
-				
+
 			}
 			return result;
-		}
-
-
-		private static void AddIterationPath(Node node, List<object> result, string parentIterationName)
-		{
-			foreach (Node item in node.ChildNodes)
-			{
-				var path = parentIterationName + "\\" + item.Name;
-				result.Add(path);
-				if (item.HasChildNodes)
-				{
-					AddIterationPath(item, result, path);
-				}
-			}
 		}
 
 	}
