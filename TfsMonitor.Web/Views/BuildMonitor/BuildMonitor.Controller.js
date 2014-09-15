@@ -1,4 +1,4 @@
-﻿app.directive('tmAudio', function () {
+﻿tfsMonitor.directive('tmAudio', function () {
 	return {
 		link: function (scope, element, attributes) {
 			var parts = attributes.tmAudio.split('.')
@@ -12,8 +12,7 @@
 	}
 })
 
-
-app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout', '$interval',
+tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window', '$timeout', '$interval',
 	function ($http, $scope, $window, $timeout, $interval) {
 		$scope.buildMonitor = new function () {
 
@@ -109,6 +108,9 @@ app.controller('BuildMonitorCtrl', ['$http', '$scope', '$window', '$timeout', '$
 								.done(function () {
 									//clear server error, set it to connected. if the server error occurs it'll come back
 									utilities.setConnectionState(true, false, false)
+									$scope.$on('$destroy', function () {
+										hub.connection.stop()
+									})
 								})
 								.fail(function (ex) {
 									//set connected = false

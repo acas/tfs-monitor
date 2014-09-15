@@ -1,0 +1,25 @@
+﻿<div ng-controller="home-controller">
+    <div class="home-module-strip" ng-show="false"> <!--has to be styled before it can be shown-->
+        <a ui-sref="home.build" class="home-module">Builds</a>
+        <a ui-sref="home.work" class="home-module">Work</a>
+    </div>
+    <div ui-view></div>
+</div>
+
+<style>
+    .home-module-strip {
+        margin: 15px;
+    }
+
+    .home-module {
+        border: 1px solid gray;
+        padding: 4px;
+        border-radius: 2px;
+        text-decoration: none;
+    }
+
+        .home-module:hover {
+            background-color: #88bdd1;
+            text-decoration: none;
+        }
+</style>

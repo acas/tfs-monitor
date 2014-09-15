@@ -1,4 +1,4 @@
-﻿app.filter('tmTimeSpan', function () {
+﻿tfsMonitor.filter('tmTimeSpan', function () {
 	return function (value) {
 		if (!value) {
 			return ''

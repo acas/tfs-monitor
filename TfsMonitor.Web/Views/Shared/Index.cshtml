@@ -11,6 +11,7 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.0-beta.13/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap.min.js"></script>
 
     <script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
@@ -20,11 +21,11 @@
 
 
     <script>
-        var app = angular.module('app', ['acas.angular'])
+        var tfsMonitor = angular.module('tfsMonitor', ['acas.angular', 'ui.router'])
     </script>
 
     <script>
-        tfsMonitor = { projectCollectionUrl : '@System.Configuration.ConfigurationManager.AppSettings["projectCollectionUrl"]' }
+        _.extend(tfsMonitor, { projectCollectionUrl : '@System.Configuration.ConfigurationManager.AppSettings["projectCollectionUrl"]' })
 
     </script>
 
@@ -32,8 +33,8 @@
 
 </head>
 <body>
-    <div ng-app="app">
-        <ng-include src="'Views/BuildMonitor/BuildMonitor.html'" />
+    <div ng-app="tfsMonitor">        
+        <div ui-view></div>                
     </div>
 
     <script src="Views/lib/jquery.signalR-2.1.1.min.js"></script>
