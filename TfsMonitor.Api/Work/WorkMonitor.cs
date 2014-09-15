@@ -86,14 +86,12 @@ namespace TfsMonitor.Api.Work
 						});
 					}
 					else
-					{
-						// Visit any child nodes (sub-iterations).
+					{						
 						if (node.FirstChild != null)
-						{
-							// The first child node is the <Children> tag, which we'll skip.
-							for (int nChild = 0; nChild < node.ChildNodes[0].ChildNodes.Count; nChild++)
+						{							
+							for (int child = 0; child < node.ChildNodes[0].ChildNodes.Count; child++)
 							{
-								FindCurrentIterations(node.ChildNodes[0].ChildNodes[nChild], projectName, result);
+								FindCurrentIterations(node.ChildNodes[0].ChildNodes[child], projectName, result);
 							}
 
 						}
@@ -111,14 +109,14 @@ namespace TfsMonitor.Api.Work
 		/// <summary>
 		/// Retrieves all work items for the current sprint in all projects
 		/// </summary>
-		public List<object> GetWorkItems()
+		public List<WorkItem> GetWorkItems()
 		{
 
-			var css = TeamProjectCollection.GetService<ICommonStructureService4>();
-			var currentIterations = new List<Iteration>();
+			ICommonStructureService4 css = TeamProjectCollection.GetService<ICommonStructureService4>();
+			List<Iteration> currentIterations = new List<Iteration>();
 
-			var result = new List<object>();
-			foreach (var project in workItemStore.Projects.Cast<Project>().Where(p => !ProjectRegexExists || ProjectRegex.IsMatch(p.Name)))
+			List<WorkItem> result = new List<WorkItem>();
+			foreach (Project project in workItemStore.Projects.Cast<Project>().Where(p => !ProjectRegexExists || ProjectRegex.IsMatch(p.Name)))
 			{
 				FindCurrentIterations(css, project.Uri.ToString(), currentIterations);
 

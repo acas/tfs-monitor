@@ -51,8 +51,8 @@ namespace SignalRChat
 			while (connections > 0)
 			{
 				try
-				{
-					var current = buildMonitor.GetBuildStatuses();
+				{					
+					List<Build> current = buildMonitor.GetBuildStatuses();
 					if (!Enumerable.SequenceEqual(lastCheck, current)) //it'll always fire the first time when the thread is started
 					{
 						Broadcast(current);

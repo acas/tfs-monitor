@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace TfsMonitor.Api.Build
 {
@@ -99,8 +100,8 @@ namespace TfsMonitor.Api.Build
 		/// <returns></returns>
 		public override bool Equals(object comparison)
 		{
-			var properties = this.GetType().GetProperties();
-			foreach (var propertyInfo in properties)
+			PropertyInfo[] properties = this.GetType().GetProperties();
+			foreach (PropertyInfo propertyInfo in properties)
 			{
 				if (propertyInfo.CanRead)
 				{
@@ -125,8 +126,8 @@ namespace TfsMonitor.Api.Build
 		public object Clone()
 		{
 			Build cloned = new Build();
-			var properties = this.GetType().GetProperties();
-			foreach (var propertyInfo in properties)
+			PropertyInfo[] properties = this.GetType().GetProperties();
+			foreach (PropertyInfo propertyInfo in properties)
 			{
 				if (propertyInfo.CanWrite)
 				{

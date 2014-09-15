@@ -118,6 +118,7 @@ ClientBin/
 *~
 *.dbmdl
 *.[Pp]ublish.xml
+*.pubxml
 *.pfx
 *.publishsettings
 
@@ -157,4 +158,6 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+
+#some custom files that should be excluded from git
 /TfsMonitor.Web/Web.Private.config
