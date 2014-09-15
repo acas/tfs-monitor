@@ -18,8 +18,6 @@ build/
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 !packages/*/build/
 
-# Enable "build/" folder in the TfsMonitor.Api folder, because it happens to be the name of a legitimate code folder
-!TfsMonitor.Api/build/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -118,7 +116,6 @@ ClientBin/
 *~
 *.dbmdl
 *.[Pp]ublish.xml
-*.pubxml
 *.pfx
 *.publishsettings
 
@@ -159,5 +156,13 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 
-#some custom files that should be excluded from git
+# ================
+# TFS Monitor
+# ================
+#some custom files that should be excluded from git#
+
 /TfsMonitor.Web/Web.Private.config
+*.pubxml
+
+# Enable "build/" folder in the TfsMonitor.Api folder, because it happens to be the name of a legitimate code folder
+!TfsMonitor.Api/build/

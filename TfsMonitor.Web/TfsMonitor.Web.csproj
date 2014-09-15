@@ -180,9 +180,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Views\Common\tmTimeSpan.Filter.js" />
-    <Content Include="Views\Fire Truck Siren-SoundBible.com-642727443.wav" />
-    <Content Include="Views\lib\jquery.signalR-2.1.1.js" />
-    <Content Include="Views\lib\jquery.signalR-2.1.1.min.js" />
+    <Content Include="Views\Fire Truck Siren-SoundBible.com-642727443.wav" />    
     <Content Include="Views\BuildMonitor\BuildMonitor.Controller.js" />
     <Content Include="Views\Police Siren-SoundBible.com-878640712.wav" />
     <Content Include="Views\Police-TheCristi95-214716303.wav" />
