@@ -5,7 +5,8 @@
 	$stateProvider
 		.state('home', {
 	  		url: "/",
-	  		templateUrl: "Views/Home/Home.html"
+	  		templateUrl: "Views/Home/Home.html",
+			abstract: true //this is abstract so that if a user navigates here, it automatically routes using the .otherwise() route
 		})
 		.state('home.build', {
 	  		url: "build",
