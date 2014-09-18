@@ -3,6 +3,8 @@ TFS Monitor
 
 TFS Monitor monitors builds (continuous integration and manual), work items and sprints. Useful both for developers' desktops and the big screen in the hallway or central location. It is rough around the edges, and the work monitor doesn't function yet, but the build monitor should work. Mostly, anyway.
 
+Tested on TFS 2013 with latest patches and updates. YMMV.
+
 Usage
 --------
 When cloning the repository, you will need to add a file next to the `Web.config` called `Web.Private.config`. The file should have appSettings entries for:

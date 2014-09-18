@@ -29,14 +29,15 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 
 
 			var utilities = {
-				intervals : [],
+				intervals: [],
 				loadData: function (data) {
 					//the way this function handles keeping track of the time of running builds is a mess, I really don't like it. Look for a better way to do it.
 					_.each(utilities.intervals, function (interval) {
 						$interval.cancel(interval)
 					})
 					utilities.intervals = []
-					$scope.$apply(function () {																		
+					$scope.$apply(function () {
+						utilities.playSounds(data)
 						_.each(data, function (build) {
 							if (build.inProgress) {
 								build.runningTime = new Date() - acas.utility.parser.toDate(build.startTime)
@@ -49,7 +50,39 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 						})
 						api.groups = utilities.group(utilities.sort(data))
 						api.serverError = false
+						utilities.playSounds(data)
 					})
+				},
+				previousData: null,
+
+				playSounds: function (data) {
+					var queueStartSound = function () {
+						//api.startSound()
+					}
+					var queueSucceededSound = function () {
+						//api.succeededSound()
+					}
+					var queueFailedSound = function () {
+						//api.failedSound()
+					}
+					var previousData = utilities.previousData
+					if (previousData && data.length === previousData.length) {
+						for (var i in data) { //the server must send back the build definitions in the same order each time. 
+							//this will break down if there's a new build definition in data but the length of the two arrays are the same, but that's rare so whatever
+							if (data[i].inProgress && !previousData[i].inProgress) {
+								queueStartSound()
+							} else if (!data[i].inProgress && previousData[i].inProgress) {
+								if (data[i].succeeded) {
+									queueSucceededSound()
+								}
+								else if (data[i].failed) {
+									queueFailedSound()
+								}
+
+							}
+						}
+					}
+					utilities.previousData = data
 				},
 
 				sort: function (data) {
@@ -91,7 +124,7 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 						var hub = jQuery.connection.buildMonitorHub
 						hub.client.sendData = function (data) {
 							utilities.loadData(data)
-						}						
+						}
 						hub.client.notifyError = function (ex) {
 							//if we're getting a server error, we must be connected
 							utilities.setConnectionState(true, false, true)

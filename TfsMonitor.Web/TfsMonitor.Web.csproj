@@ -180,10 +180,10 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Views\Common\tmTimeSpan.Filter.js" />
-    <Content Include="Views\Fire Truck Siren-SoundBible.com-642727443.wav" />    
+    <Content Include="Views\Siren1.wav" />
     <Content Include="Views\BuildMonitor\BuildMonitor.Controller.js" />
-    <Content Include="Views\Police Siren-SoundBible.com-878640712.wav" />
-    <Content Include="Views\Police-TheCristi95-214716303.wav" />
+    <Content Include="Views\Siren2.wav" />
+    <Content Include="Views\Siren3.wav" />
     <Content Include="Web.config" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\BuildMonitor\BuildMonitor.html" />

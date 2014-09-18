@@ -1,6 +1,8 @@
 ﻿
 <div ng-controller="build-monitor-controller">
-    <audio src="Views/Police Siren-SoundBible.com-878640712.wav" tm-audio="buildMonitor.playSiren" preload="auto"></audio>
+    <audio src="Views/Siren1.wav" tm-audio="buildMonitor.failedSound" preload="auto"></audio>
+    <audio src="Views/Siren2.wav" tm-audio="buildMonitor.succeededSound" preload="auto"></audio>
+    <audio src="Views/Siren3.wav" tm-audio="buildMonitor.startSound" preload="auto"></audio>
 
     <div class="error" ng-class="{'active': !buildMonitor.connected}" align="center">
         Uh-oh. You seem to have lost your connection with the server.
@@ -60,6 +62,7 @@
 
                 </div>
             </div>
+            
         </div>
 
     </div>
@@ -95,7 +98,7 @@
     }
 
     .group {
-        display: inline-table;
+        display: table;
     }
 
     .group-header {

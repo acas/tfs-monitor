@@ -44,8 +44,8 @@ namespace TfsMonitor.Api.Build
 
 			foreach (TeamProject project in teamProjects.Where(p => !ProjectRegexExists || ProjectRegex.Match(p.Name).Success))
 			{
-				IBuildDefinition[] defintions = BuildServer.QueryBuildDefinitions(project.Name);
-				foreach (IBuildDefinition definition in defintions.Where(d => !DefinitionRegexExists || DefinitionRegex.Match(d.Name).Success))
+				IBuildDefinition[] definitions = BuildServer.QueryBuildDefinitions(project.Name);
+				foreach (IBuildDefinition definition in definitions.Where(d => !DefinitionRegexExists || DefinitionRegex.Match(d.Name).Success))
 				{
 					IBuildDetailSpec spec = BuildServer.CreateBuildDetailSpec(project.Name, definition.Name);
 					spec.QueryOptions = QueryOptions.None;
@@ -102,8 +102,9 @@ namespace TfsMonitor.Api.Build
 			UpdateBuildStatus();
 
 			List<Build> result = new List<Build>();
-			result.AddRange(BuildStatuses.Select(x => (Build)x.Clone()));
-			return result;
+			result.AddRange(BuildStatuses.Select(x => (Build)x.Clone()));		
+			//result must come back in the same order every time so that the client can compare previous to current easily				
+			return result.OrderBy(x => x.BuildDefinitionUri.ToString()).ToList();
 		}
 
 
