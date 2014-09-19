@@ -3,15 +3,16 @@
         <div ng-repeat="project in workMonitor.projects">
             <div class="row work-project-header tm-clickable " ng-click="workMonitor.projectCollapse[project.name] = !workMonitor.projectCollapse[project.name]">
                 <span class="pull-left work-project-header">{{project.name}}</span>
-                <span class="pull-right">{{project.data.length}} item(s) outstanding</span>
+                <span class="pull-right">{{project.data.length}} item<span ng-show="project.data.length !== 1">s</span> outstanding</span>
             </div>
             <div collapse="workMonitor.projectCollapse[project.name]">
-                <table class="table table-condensed table-striped">
+                <div class="work-no-workitems" ng-show="!project.data.length"><span style="font-size:16pt;">Congratulations!</span> <br />There are no items remaining in the current sprint.</div>
+                <table class="table table-condensed table-striped" ng-show="project.data.length">
                     <thead>
                         <tr>
-                            <th></th>
-                            <th>Assigned To</th>
-                            <th>State</th>
+                            <th style="width:25px;"></th>
+                            <th style="width:250px;">Assigned To</th>
+                            <th style="width:120px;">State</th>
                             <th>Title</th>
                         </tr>
                     </thead>
@@ -32,7 +33,7 @@
     div.work-project-header {
         border-bottom: 1px solid black;
         margin: 5px;
-        margin-bottom:20px;
+        margin-bottom: 20px;
     }
 
     span.work-project-header {
@@ -54,5 +55,13 @@
 
     .work-workitem:hover > td {
         background-color: antiquewhite !important;
+    }
+
+    .work-no-workitems {
+        text-align: center;
+        padding: 15px;
+        background: rgba(211, 211, 211, 0.41);
+        border-radius: 6px;
+        font-size: 12pt;
     }
 </style>
