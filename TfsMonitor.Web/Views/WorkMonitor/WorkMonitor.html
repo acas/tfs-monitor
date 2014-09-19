@@ -1,30 +1,58 @@
-﻿<div ng-controller="work-monitor-controller">  
+﻿<div ng-controller="work-monitor-controller">
     <div class="container-fluid">
-        <table class="table table-condensed table-striped">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Assigned To</th>
-                    <th>State</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="item in workMonitor.workItems">
-                    <td title="{{item.type}}"><span ng-class="item.type === 'Bug' ? 'bug': 'pbi'"></span></td>
-                    <td>{{item.assignee}}</td>
-                    <td>{{item.state}}</td>
-                    <td>{{item.title}}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div ng-repeat="project in workMonitor.projects">
+            <div class="row work-project-header tm-clickable " ng-click="workMonitor.projectCollapse[project.name] = !workMonitor.projectCollapse[project.name]">
+                <span class="pull-left work-project-header">{{project.name}}</span>
+                <span class="pull-right">{{project.data.length}} item(s) outstanding</span>
+            </div>
+            <div collapse="workMonitor.projectCollapse[project.name]">
+                <table class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Assigned To</th>
+                            <th>State</th>
+                            <th>Title</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in project.data" ng-click="workMonitor.openWorkItem(item)" class="tm-clickable work-workitem">
+                            <td title="{{item.type}}"><span class="work-workitem-type-icon" ng-class="item.type === 'Bug' ? 'bug': 'pbi'"></span></td>
+                            <td>{{item.assignee}}</td>
+                            <td>{{item.state}}</td>
+                            <td>{{item.title}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 <style>
-    .bug{        
-        border:4px solid red;
+    div.work-project-header {
+        border-bottom: 1px solid black;
+        margin: 5px;
+        margin-bottom:20px;
     }
-    .pbi{        
-        border:4px solid blue;
+
+    span.work-project-header {
+        font-size: 16pt;
+        color: black;
+    }
+
+    .work-workitem-type-icon {
+        border: 4px solid black;
+    }
+
+        .work-workitem-type-icon.bug {
+            border-color: rgba(255, 0, 0, 0.51);
+        }
+
+        .work-workitem-type-icon.pbi {
+            border-color: rgba(23, 191, 237, 0.68);
+        }
+
+    .work-workitem:hover > td {
+        background-color: antiquewhite !important;
     }
 </style>

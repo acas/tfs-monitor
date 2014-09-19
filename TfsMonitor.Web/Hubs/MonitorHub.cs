@@ -31,7 +31,13 @@ namespace TfsMonitor.Web.Hubs
 
 		public override Task OnDisconnected(bool stopCalled)
 		{
-			connections--;
+			if (connections > 0) //for some reason it was going negative at times
+			{
+				connections--;
+			}
+			
+			
+			
 			return base.OnDisconnected(stopCalled);
 		}
 

@@ -156,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\Deploy.pubxml" />
+    <Content Include="Views\Common\tfsMonitor.css" />
     <Content Include="Views\Common\tfsMonitor.Routes.js" />
     <Content Include="Views\Common\tmMonitor.Service.js" />
     <Content Include="Views\Home\Home.Controller.js" />
