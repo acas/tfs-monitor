@@ -145,6 +145,7 @@ namespace TfsMonitor.Api.Work
 						result.Add(new WorkItem()
 						{
 							Title = workItem.Title,
+							Type = workItem.Type.Name,
 							Project = workItem.Project.Name,
 							WorkItemID = workItem.Id,
 							State = workItem.State,

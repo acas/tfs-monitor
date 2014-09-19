@@ -12,8 +12,8 @@
 	}
 })
 
-tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window', '$timeout', '$interval',
-	function ($http, $scope, $window, $timeout, $interval) {
+tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window', '$timeout', '$interval', 'tmMonitor',
+	function ($http, $scope, $window, $timeout, $interval, tmMonitor) {
 		$scope.buildMonitor = new function () {
 
 			var options = {
@@ -22,12 +22,9 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 				groupByField: 'project',
 				collapseOptions: false
 			}
-
+			
 			_.extend(options, JSON.parse($window.localStorage.getItem("tfs-monitor.buildMonitor.options")))
-
-			var connected = true //start off connected so that the user doesn't see an error before the initial connection is attempted			
-
-
+			
 			var utilities = {
 				intervals: [],
 				loadData: function (data) {
@@ -56,27 +53,27 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 				previousData: null,
 
 				playSounds: function (data) {
-					var queueStartSound = function () {
+					var playStartSound = function () {
 						//api.startSound()
 					}
-					var queueSucceededSound = function () {
+					var playSucceededSound = function () {
 						//api.succeededSound()
 					}
-					var queueFailedSound = function () {
-						//api.failedSound()
+					var playFailedSound = function () {
+						api.failedSound()
 					}
 					var previousData = utilities.previousData
 					if (previousData && data.length === previousData.length) {
 						for (var i in data) { //the server must send back the build definitions in the same order each time. 
 							//this will break down if there's a new build definition in data but the length of the two arrays are the same, but that's rare so whatever
 							if (data[i].inProgress && !previousData[i].inProgress) {
-								queueStartSound()
+								playStartSound()
 							} else if (!data[i].inProgress && previousData[i].inProgress) {
 								if (data[i].succeeded) {
-									queueSucceededSound()
+									playSucceededSound()
 								}
 								else if (data[i].failed) {
-									queueFailedSound()
+									playFailedSound()
 								}
 
 							}
@@ -104,71 +101,25 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 				},
 
 				initialize: function () {
+					utilities.monitor.setLoadDataFn(utilities.loadData)
 					utilities.connect(true)
-				},
-
-				setConnectionState: function (connected, connecting, serverError) {
-					$timeout(function () {
-						$scope.$apply(function () {
-							api.serverError = serverError
-							api.connecting = connecting
-							api.connected = connected
-						})
+					$scope.$on('$destroy', function () {
+						utilities.monitor.stop()
 					})
 				},
-
-				connect: function (firstTry) {
-					jQuery(function () {
-
-
-						var hub = jQuery.connection.buildMonitorHub
-						hub.client.sendData = function (data) {
-							utilities.loadData(data)
-						}
-						hub.client.notifyError = function (ex) {
-							//if we're getting a server error, we must be connected
-							utilities.setConnectionState(true, false, true)
-							console.error(ex)
-						}
-
-						try {
-							if (!firstTry) {
-								//set it to connecting, leave server error false until it fails again after a successful connection
-								utilities.setConnectionState(false, true, false)
-							}
-							jQuery.connection.hub
-								.start()
-								.done(function () {
-									//clear server error, set it to connected. if the server error occurs it'll come back
-									utilities.setConnectionState(true, false, false)
-									$scope.$on('$destroy', function () {
-										hub.connection.stop()
-									})
-								})
-								.fail(function (ex) {
-									//set connected = false
-									//clear server error, we don't even have a connection so server error is irrelevant now
-									utilities.setConnectionState(false, false, false)
-									console.error(ex)
-								})
-
-						}
-						catch (ex) {
-							console.error(ex)
-						}
-						jQuery.connection.hub.disconnected(function () {
-							utilities.setConnectionState(false, false, false)
-						})
-					})
-
-
-
+			
+				monitor: tmMonitor('buildMonitorHub'),
+				connect: function () {
+					this.monitor.connect()
 				}
 			}
 
 			var api = {
 				options: options,
-				connected: connected,
+				
+				serverError: utilities.monitor.serverError,
+				connecting: utilities.monitor.connecting,
+				connected: utilities.monitor.connected,
 
 				connect: function () {
 					utilities.connect(false)

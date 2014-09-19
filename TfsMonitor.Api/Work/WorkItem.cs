@@ -9,6 +9,7 @@ namespace TfsMonitor.Api.Work
 	public class WorkItem
 	{
 		public int WorkItemID;
+		public string Type;
 		public string Project;
 		public string Title;
 		public string Assignee;

@@ -157,6 +157,7 @@
   <ItemGroup>
     <None Include="Properties\PublishProfiles\Deploy.pubxml" />
     <Content Include="Views\Common\tfsMonitor.Routes.js" />
+    <Content Include="Views\Common\tmMonitor.Service.js" />
     <Content Include="Views\Home\Home.Controller.js" />
     <Content Include="Views\Home\Home.html" />
     <Content Include="Views\WorkMonitor\WorkMonitor.Controller.js" />
@@ -169,6 +170,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Hubs\MonitorHub.cs" />
+    <Compile Include="Hubs\WorkMonitorHub.cs" />
     <Compile Include="Hubs\BuildMonitorHub.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Global.asax.cs">
