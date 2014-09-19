@@ -5,6 +5,13 @@ TFS Monitor monitors builds (continuous integration and manual), work items and 
 
 Tested on TFS 2013 with latest patches and updates. YMMV.
 
+TFS Monitor's chief benefits over Microsoft's Team Web Access solution are:
+* TFS Monitor auto refreshes when changes are made to the underlying data. This makes it ideal for unattended use on a large, public monitor
+* TFS Monitor provides views that span multiple projects. For whatever reason, TFS considers each project its own siloed universe. For teams that juggle multiple projects
+ at once, TFS Monitor gives developers and others a way to quickly see the status of all their projects in one place.
+* TFS Monitor provides a clean, clutter-free view of the status of your builds/sprints, making it ideal for an unattended large monitor.
+
+
 Usage
 --------
 When cloning the repository, you will need to add a file next to the `Web.config` called `Web.Private.config`. The file should have appSettings entries for:
