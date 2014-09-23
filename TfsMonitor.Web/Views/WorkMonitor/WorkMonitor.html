@@ -11,6 +11,7 @@
                     <thead>
                         <tr>
                             <th style="width:25px;"></th>
+                            <th style="width:70px;">ID</th>
                             <th style="width:250px;">Assigned To</th>
                             <th style="width:120px;">State</th>
                             <th>Title</th>
@@ -19,6 +20,7 @@
                     <tbody>
                         <tr ng-repeat="item in project.data" ng-click="workMonitor.openWorkItem(item)" class="tm-clickable work-workitem">
                             <td title="{{item.type}}"><span class="work-workitem-type-icon" ng-class="item.type === 'Bug' ? 'bug': 'pbi'"></span></td>
+                            <td>{{item.workItemID}}</td>
                             <td>{{item.assignee}}</td>
                             <td>{{item.state}}</td>
                             <td>{{item.title}}</td>
