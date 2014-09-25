@@ -1,14 +1,17 @@
 ﻿tfsMonitor.factory('tmMonitor', ['$timeout', function ($timeout) {
-	return function (hubName, loadDataFn) {
+	return function (hubName, scope, loadDataFn) {
 		return new function () {
 			
 			var utilities = {
 				loadDataFn: loadDataFn,
+				scope: scope,
 				setConnectionState: function (connected, connecting, serverError) {
-					$timeout(function () {						
+					$timeout(function () {
+						scope.$apply(function(){
 							api.serverError = serverError
 							api.connecting = connecting
 							api.connected = connected						
+						})
 					})
 				}
 			}
@@ -16,8 +19,6 @@
 			var api = {
 				connect: function (firstTry) {
 					jQuery(function () {
-
-
 						var hub = jQuery.connection[hubName]
 						utilities.hub = hub
 						hub.client.sendData = function (data) {

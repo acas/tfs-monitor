@@ -1,3 +1,21 @@
-﻿.tm-clickable{
-	cursor:pointer;
+﻿a, .tm-clickable {
+	cursor: pointer;
+}
+
+div.error.active {
+	opacity: 1;
+	height: auto;
+	padding: 10px;
+}
+
+div.error {
+	background-color: orange;
+	display: block;
+	-webkit-transition: opacity 1s ease-out;
+	-moz-transition: opacity 1s ease-out;
+	-o-transition: opacity 1s ease-out;
+	transition: opacity 1s ease-out;
+	opacity: 0;
+	height: 0;
+	overflow: hidden;
 }

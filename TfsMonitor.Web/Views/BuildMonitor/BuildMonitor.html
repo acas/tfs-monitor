@@ -4,12 +4,12 @@
     <audio src="Views/Siren2.wav" tm-audio="buildMonitor.succeededSound" preload="auto"></audio>
     <audio src="Views/Siren3.wav" tm-audio="buildMonitor.startSound" preload="auto"></audio>
 
-    <div class="error" ng-class="{'active': !buildMonitor.connected}" align="center">
+    <div class="error" ng-class="{'active': !buildMonitor.connected()}" align="center">
         Uh-oh. You seem to have lost your connection with the server.
-        <a ng-click="buildMonitor.connect()" ng-show="!buildMonitor.connecting">Retry</a>
-        <span ng-show="buildMonitor.connecting" style="font-style:italic">Connecting...</span>
+        <a ng-click="buildMonitor.connect()" ng-show="!buildMonitor.connecting()">Retry</a>
+        <span ng-show="buildMonitor.connecting()" style="font-style:italic">Connecting...</span>
     </div>
-    <div class="error" ng-class="{'active': buildMonitor.serverError}" align="center">
+    <div class="error" ng-class="{'active': buildMonitor.serverError()}" align="center">
         Shoot, the server is having trouble finding the build information in TFS. The data you see on the screen may be a bit out of date. 
         (This message will disappear as soon as the server sorts its issues out. Please be patient and extend your unconditional love and support during this challenging time. Thanks.)
     </div>
@@ -69,11 +69,7 @@
 
 </div>
 
-<style>
-    a {
-        cursor: pointer;
-    }
-
+<style>  
     .main-section {
         padding: 100px;
         padding-top: 0;
@@ -137,20 +133,5 @@
 
     .build-definition {
         font-size: large;
-    }
-
-    div.error.active {        
-        opacity: 1;
-        height: auto;
-        padding: 10px;
-    }
-
-    div.error {        
-        background-color: orange;
-        display: block;
-        -webkit-transition: opacity 1s ease-out;
-        opacity: 0;
-        height: 0;
-        overflow: hidden;
     }
 </style>

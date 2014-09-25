@@ -1,5 +1,14 @@
 ﻿<div ng-controller="work-monitor-controller">
-    <div class="container-fluid">
+    <div class="error" ng-class="{'active': !workMonitor.connected()}" align="center">
+        Uh-oh. You seem to have lost your connection with the server.
+        <a ng-click="workMonitor.connect()" ng-show="!workMonitor.connecting()">Retry</a>
+        <span ng-show="workMonitor.connecting()" style="font-style:italic">Connecting...</span>
+    </div>
+    <div class="error" ng-class="{'active': workMonitor.serverError()}" align="center">
+        Shoot, the server is having trouble finding the work item information in TFS. The data you see on the screen may be a bit out of date.
+        (This message will disappear as soon as the server sorts its issues out. Please be patient and extend your unconditional love and support during this challenging time. Thanks.)
+    </div>
+    <div class="container-fluid">       
         <div ng-repeat="project in workMonitor.projects">
             <div class="row work-project-header tm-clickable " ng-click="workMonitor.projectCollapse[project.name] = !workMonitor.projectCollapse[project.name]">
                 <span class="pull-left work-project-header">{{project.name}}</span>
