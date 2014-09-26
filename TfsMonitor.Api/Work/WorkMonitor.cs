@@ -31,18 +31,18 @@ namespace TfsMonitor.Api.Work
 			workItemStore = (WorkItemStore)TeamProjectCollection.GetService(typeof(WorkItemStore));
 		}
 
-		private void FindCurrentIterations(ICommonStructureService4 css, string uri, List<Iteration> result)
+		private void FindCurrentIteration(ICommonStructureService4 css, string projectUri, List<Iteration> result)
 		{
 
-			NodeInfo[] structures = css.ListStructures(uri);
+			NodeInfo[] structures = css.ListStructures(projectUri);
 			NodeInfo iterations = structures.FirstOrDefault(n => n.StructureType.Equals("ProjectLifecycle"));
 
 			System.Xml.XmlElement iterationsTree = css.GetNodesXml(new[] { iterations.Uri }, true);
 
 			if (iterations != null)
 			{
-				string projectName = css.GetProject(uri).Name;
-				FindCurrentIterations(iterationsTree.ChildNodes[0], projectName, result);
+				string projectName = css.GetProject(projectUri).Name;
+				FindCurrentIteration(iterationsTree.ChildNodes[0], projectName, result);
 			}
 		}
 
@@ -54,7 +54,7 @@ namespace TfsMonitor.Api.Work
 		/// <param name="node">The root node to look for iterations in</param>
 		/// <param name="projectName">The project to search in</param>
 		/// <param name="result">The list the found iteration is to be added to.</param>
-		private void FindCurrentIterations(System.Xml.XmlNode node, string projectName, List<Iteration> result)
+		private void FindCurrentIteration(System.Xml.XmlNode node, string projectName, List<Iteration> result)
 		{
 			//check if the project is already in the result, if it is return
 
@@ -67,15 +67,15 @@ namespace TfsMonitor.Api.Work
 					string strStartDate = (node.Attributes["StartDate"] != null) ? node.Attributes["StartDate"].Value : null;
 					string strEndDate = (node.Attributes["FinishDate"] != null) ? node.Attributes["FinishDate"].Value : null;
 
-					DateTime startDate = DateTime.Now;
-					DateTime endDate = DateTime.Now;
-					bool datesValid = true;
+					DateTime startDate = DateTime.MinValue;
+					DateTime endDate = DateTime.MinValue;
+					bool datesValid;
 
 					// Both dates should be valid.
 					datesValid = DateTime.TryParse(strStartDate, out startDate) && DateTime.TryParse(strEndDate, out endDate);
 
 					if (!string.IsNullOrEmpty(strStartDate) && !string.IsNullOrEmpty(strEndDate)
-						&& datesValid && startDate <= DateTime.Now && endDate >= DateTime.Now)
+						&& datesValid && startDate <= DateTime.Now && endDate.AddDays(1) >= DateTime.Now) //endDate is midnight of the last day of the sprint. add 1 day to include the final day
 					{
 						result.Add(new Iteration()
 						{
@@ -91,7 +91,7 @@ namespace TfsMonitor.Api.Work
 						{							
 							for (int child = 0; child < node.ChildNodes[0].ChildNodes.Count; child++)
 							{
-								FindCurrentIterations(node.ChildNodes[0].ChildNodes[child], projectName, result);
+								FindCurrentIteration(node.ChildNodes[0].ChildNodes[child], projectName, result);
 							}
 
 						}
@@ -118,7 +118,7 @@ namespace TfsMonitor.Api.Work
 			List<WorkItem> result = new List<WorkItem>();
 			foreach (Project project in workItemStore.Projects.Cast<Project>().Where(p => !ProjectRegexExists || ProjectRegex.IsMatch(p.Name)))
 			{
-				FindCurrentIterations(css, project.Uri.ToString(), currentIterations);
+				FindCurrentIteration(css, project.Uri.ToString(), currentIterations);
 
 
 				Dictionary<string, string> parameters = new Dictionary<string, string>();
