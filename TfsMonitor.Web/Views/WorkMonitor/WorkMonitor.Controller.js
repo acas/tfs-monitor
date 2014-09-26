@@ -22,8 +22,8 @@
 				},
 
 				monitor: tmMonitor('workMonitorHub', $scope),
-				connect: function () {
-					this.monitor.connect()
+				connect: function (firstTry) {
+					this.monitor.connect(firstTry)
 				}
 			}
 
@@ -31,7 +31,7 @@
 				projectCollapse: {},
 				serverError: function () { return utilities.monitor.serverError },
 				connecting: function () { return utilities.monitor.connecting },
-				connected: function () { return utilities.monitor.connected },
+				connected: function () { return utilities.monitor.connected },				
 
 				connect: function () {
 					utilities.connect(false)

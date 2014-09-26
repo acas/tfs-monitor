@@ -45,8 +45,7 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 								)
 							}
 						})
-						api.groups = utilities.group(utilities.sort(data))
-						api.serverError = false
+						api.groups = utilities.group(utilities.sort(data))						
 						utilities.playSounds(data)
 					})
 				},
@@ -109,8 +108,8 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 				},
 			
 				monitor: tmMonitor('buildMonitorHub', $scope),
-				connect: function () {
-					this.monitor.connect()
+				connect: function (firstTry) {
+					this.monitor.connect(firstTry)
 				}
 			}
 
