@@ -1,9 +1,13 @@
 ﻿<div ng-controller="home-controller">
-    <div class="home-module-strip" ng-show="false"> <!--has to be styled before it can be shown-->
+    <div class="home-module-strip"> 
+        <!--todo the styling here is terrible-->
         <a ui-sref="home.build" class="home-module">Builds</a>
         <a ui-sref="home.work" class="home-module">Work</a>
     </div>
-    <div ui-view></div>
+    <div>
+        <div ui-view></div>
+    </div>
+    
 </div>
 
 <style>
