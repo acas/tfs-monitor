@@ -138,10 +138,25 @@ namespace TfsMonitor.Api.Work
 						and System.TeamProject = @Project and System.IterationPath = @IterationPath",
 							parameters
 					   );
-
-					//List<WorkItem> result = new List<WorkItem>();
+					
 					foreach (Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem workItem in queryResults)
-					{
+					{	
+						//TODO this is really slow. ALl the queries should be combined into one, with dataprocessing on the
+						//performed here to figure all this stuff out
+						double remainingWork = 0;
+						foreach (WorkItemLink link in workItem.WorkItemLinks)
+						{
+							if (link.LinkTypeEnd.Name == "Child")
+							{
+								var item = workItemStore.GetWorkItem(link.TargetId);
+								var value = item.Fields["Remaining Work"].Value;
+								if (value != null)
+								{
+									remainingWork += double.Parse(value.ToString());
+								}
+								
+							}
+						}
 						result.Add(new WorkItem()
 						{
 							Title = workItem.Title,
@@ -149,7 +164,8 @@ namespace TfsMonitor.Api.Work
 							Project = workItem.Project.Name,
 							WorkItemID = workItem.Id,
 							State = workItem.State,
-							Assignee = workItem.Fields["Assigned To"].Value.ToString()
+							Assignee = workItem.Fields["Assigned To"].Value.ToString(),
+							WorkRemaining = remainingWork
 						});
 
 					}

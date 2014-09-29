@@ -15,6 +15,7 @@ namespace TfsMonitor.Api.Work
 		public string Title { get; set; }
 		public string Assignee { get; set; }
 		public string State { get; set; }
+		public double WorkRemaining { get; set; }
 
 
 		/// <summary>
