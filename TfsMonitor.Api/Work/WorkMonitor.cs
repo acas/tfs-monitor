@@ -143,16 +143,21 @@ namespace TfsMonitor.Api.Work
 					{	
 						//TODO this is really slow. ALl the queries should be combined into one, with dataprocessing on the
 						//performed here to figure all this stuff out
-						double remainingWork = 0;
+						Dictionary<Activity, double> workRemaining = new Dictionary<Activity,double>();
 						foreach (WorkItemLink link in workItem.WorkItemLinks)
 						{
 							if (link.LinkTypeEnd.Name == "Child")
 							{
-								var item = workItemStore.GetWorkItem(link.TargetId);
+								var item = workItemStore.GetWorkItem(link.TargetId);								
 								var value = item.Fields["Remaining Work"].Value;
 								if (value != null)
 								{
-									remainingWork += double.Parse(value.ToString());
+									Activity activity = (Activity)Enum.Parse(typeof(Activity), item.Fields["Activity"].Value.ToString(), true);
+									if (!workRemaining.ContainsKey(activity))
+									{
+										workRemaining.Add(activity, 0);
+									}
+									workRemaining[activity] += double.Parse(value.ToString());
 								}
 								
 							}
@@ -165,7 +170,7 @@ namespace TfsMonitor.Api.Work
 							WorkItemID = workItem.Id,
 							State = workItem.State,
 							Assignee = workItem.Fields["Assigned To"].Value.ToString(),
-							WorkRemaining = remainingWork
+							WorkRemaining = workRemaining
 						});
 
 					}

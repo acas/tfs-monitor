@@ -34,7 +34,7 @@
                             <td>{{item.assignee}}</td>
                             <td>{{item.state}}</td>
                             <td>{{item.title}}</td>
-                            <td style="text-align:right;padding-right:10px;">{{item.workRemaining | tmZeroToNull : acFormatNumber : {minPrecision: 0, maxPrecision: 2} }}</td>
+                            <td style="text-align:right;padding-right:10px;">{{(item.workRemaining.development +  item.workRemaining.testing) | tmZeroToNull : acFormatNumber : {minPrecision: 0, maxPrecision: 2} }}</td>
                         </tr>
                     </tbody>
                 </table>
