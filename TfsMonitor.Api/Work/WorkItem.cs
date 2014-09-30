@@ -7,15 +7,27 @@ using System.Reflection;
 
 namespace TfsMonitor.Api.Work
 {
-	public class WorkItem: ICloneable
+	public enum Activity { Development, Testing, Deployment, Design, Documentation, Requirements }
+	public class WorkItem : ICloneable
 	{
 		public int WorkItemID { get; set; }
-		public string Type {get; set;}
+		public string Type { get; set; }
 		public string Project { get; set; }
 		public string Title { get; set; }
 		public string Assignee { get; set; }
 		public string State { get; set; }
+		public Dictionary<Activity, double> WorkRemaining { get; set; }
 
+		public WorkItem()
+			: base()
+		{
+			this.WorkRemaining = new Dictionary<Activity, double>();
+		}
+
+		public override string ToString()
+		{
+			return this.Project + " - " + this.Title;
+		}
 
 		/// <summary>
 		/// If all CanRead properties on this WorkItem equal the corresponding properties on the comparison object, 
@@ -24,7 +36,17 @@ namespace TfsMonitor.Api.Work
 		/// <param name="comparison"></param>
 		/// <returns></returns>
 		public override bool Equals(object comparison)
-		{
+		{	
+			if (comparison == null)
+			{
+				return false;
+			}
+
+			if (!this.GetType().Equals(comparison.GetType()))
+			{
+				return false;
+			}
+
 			PropertyInfo[] properties = this.GetType().GetProperties();
 			foreach (PropertyInfo propertyInfo in properties)
 			{
@@ -41,7 +63,7 @@ namespace TfsMonitor.Api.Work
 
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			return this.WorkItemID;
 		}
 
 		/// <summary>

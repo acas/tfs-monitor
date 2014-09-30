@@ -27,7 +27,7 @@ namespace SignalRChat
 		#region IContractResolver Members
 
 		public JsonContract ResolveContract(Type type)
-		{
+		{			
 			if (type.Assembly.Equals(_assembly))
 			{
 				return _defaultContractSerializer.ResolveContract(type);

@@ -159,6 +159,7 @@
     <Content Include="Views\Common\tfsMonitor.css" />
     <Content Include="Views\Common\tfsMonitor.Routes.js" />
     <Content Include="Views\Common\tmMonitor.Service.js" />
+    <Content Include="Views\Common\tmZeroToNull.Filter.js" />
     <Content Include="Views\Home\Home.Controller.js" />
     <Content Include="Views\Home\Home.html" />
     <Content Include="Views\WorkMonitor\WorkMonitor.Controller.js" />

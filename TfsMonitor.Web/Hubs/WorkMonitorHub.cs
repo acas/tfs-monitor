@@ -34,13 +34,16 @@ namespace TfsMonitor.Web.Hubs
 			{
 				try
 				{
-					List<WorkItem> current = ((WorkMonitor)monitor).GetWorkItems();
+					List<WorkItem> current = ((WorkMonitor)monitor).GetWorkItems();					
 					if (!Enumerable.SequenceEqual(lastCheck, current)) //it'll always fire the first time when the thread is started
 					{
 						Broadcast(current);
 						lastCheck = current;
 					}
-					Thread.Sleep(2000);
+					//interval is large because the query is slow. Speed up the query and then tighten the interval, perhaps. 
+					//in any case it's ok for the work items to be a few seconds behind, because they don't change as frequently as 
+					//builds do and timing is not as critical
+					Thread.Sleep(10 * 1000); 
 				}
 				catch (Exception ex)
 				{

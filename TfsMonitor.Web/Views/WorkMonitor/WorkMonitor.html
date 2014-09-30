@@ -24,6 +24,7 @@
                             <th style="width:250px;">Assigned To</th>
                             <th style="width:120px;">State</th>
                             <th>Title</th>
+                            <th style="text-align:right;padding-right:10px;">Work Remaining</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,6 +34,7 @@
                             <td>{{item.assignee}}</td>
                             <td>{{item.state}}</td>
                             <td>{{item.title}}</td>
+                            <td style="text-align:right;padding-right:10px;">{{(item.workRemaining.development +  item.workRemaining.testing) | tmZeroToNull : acFormatNumber : {minPrecision: 0, maxPrecision: 2} }}</td>
                         </tr>
                     </tbody>
                 </table>
