@@ -7,7 +7,12 @@
 						var grouped = _.groupBy(_.sortBy(data, 'state'), 'project')
 						var processed = []
 						for (var project in grouped) {
-							processed.push({ name: project, data: grouped[project] })
+							processed.push({
+								name: project,
+								data: grouped[project],
+								count: grouped[project].length,
+								workRemaining: _.reduce(grouped[project], function (memo, item) { return memo += (item.workRemaining.development || 0) + (item.workRemaining.testing || 0) }, 0)
+							})
 						}
 						api.projects = processed
 					})
