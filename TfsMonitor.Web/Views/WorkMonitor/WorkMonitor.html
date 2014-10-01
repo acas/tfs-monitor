@@ -8,41 +8,125 @@
         Shoot, the server is having trouble finding the work item information in TFS. The data you see on the screen may be a bit out of date.
         (This message will disappear as soon as the server sorts its issues out. Please be patient and extend your unconditional love and support during this challenging time. Thanks.)
     </div>
-    <div class="container-fluid">       
-        <div ng-repeat="project in workMonitor.projects">
-            <div class="row work-project-header tm-clickable " ng-click="workMonitor.projectCollapse[project.name] = !workMonitor.projectCollapse[project.name]">
-                <span class="pull-left work-project-header">{{project.name}}</span>
-                <span class="pull-right">{{project.data.length}} item<span ng-show="project.data.length !== 1">s</span> outstanding</span>
+    <div class="container-fluid">
+        <div>
+            <div class="work-project-list-column">
+                <div class="work-project" ng-click="workMonitor.selectedProject = undefined"
+                     ng-class="{'active': workMonitor.selectedProject === undefined}">
+                    <div class="work-project-title">All Projects</div>
+                </div>
+                <div ng-repeat="project in workMonitor.projects" class="work-project" ng-click="workMonitor.selectedProject = project.name; workMonitor.projectCollapse[project.name] = false"
+                     ng-class="{'active': workMonitor.selectedProject === project.name}">
+                    <div class="work-project-title">{{project.name}}</div>
+                    <div><span class="work-project-data">{{project.data.length}}</span> items outstanding</div>
+                    <div><span class="work-project-data">{{project.workRemaining | acFormatNumber: {minPrecision: 0, maxPrecision: 2} }}</span> hours</div>
+                </div>
             </div>
-            <div collapse="workMonitor.projectCollapse[project.name]">
-                <div class="work-no-workitems" ng-show="!project.data.length"><span style="font-size:16pt;">Congratulations!</span> <br />There are no items remaining in the current sprint.</div>
-                <table class="table table-condensed table-striped" ng-show="project.data.length">
-                    <thead>
-                        <tr>
-                            <th style="width:25px;"></th>
-                            <th style="width:70px;">ID</th>
-                            <th style="width:250px;">Assigned To</th>
-                            <th style="width:120px;">State</th>
-                            <th>Title</th>
-                            <th style="text-align:right;padding-right:10px;">Work Remaining</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="item in project.data" ng-click="workMonitor.openWorkItem(item)" class="tm-clickable work-workitem">
-                            <td title="{{item.type}}"><span class="work-workitem-type-icon" ng-class="item.type === 'Bug' ? 'bug': 'pbi'"></span></td>
-                            <td>{{item.workItemID}}</td>
-                            <td>{{item.assignee}}</td>
-                            <td>{{item.state}}</td>
-                            <td>{{item.title}}</td>
-                            <td style="text-align:right;padding-right:10px;">{{(item.workRemaining.development +  item.workRemaining.testing) | tmZeroToNull : acFormatNumber : {minPrecision: 0, maxPrecision: 2} }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="work-table-column">
+                <div>
+                    <div ng-repeat="project in workMonitor.projects | filter : {name: workMonitor.selectedProject} ">
+                        <div class="row work-project-header tm-clickable " ng-click="workMonitor.projectCollapse[project.name] = !workMonitor.projectCollapse[project.name]">
+                            <span class="pull-left work-project-header">{{project.name}}</span>
+                            <span class="pull-right">
+                                {{project.data.length}} item<span ng-show="project.data.length !== 1">s</span> outstanding
+                                - {{project.workRemaining |  acFormatNumber : {minPrecision: 0, maxPrecision: 2} }} hours
+                            </span>
+                        </div>
+                        <div collapse="workMonitor.projectCollapse[project.name]">
+                            <div class="work-no-workitems" ng-show="!project.data.length"><span style="font-size:16pt;">Congratulations!</span> <br />There are no items remaining in the current sprint.</div>
+                            <table class="table table-condensed table-striped" ng-show="project.data.length">
+                                <thead>
+                                    <tr>
+                                        <th style="width:25px;"></th>
+                                        <th style="width:70px;">ID</th>
+                                        <th style="width:250px;">Assigned To</th>
+                                        <th style="width:120px;">State</th>
+                                        <th>Title</th>
+                                        <th style="text-align:right;padding-right:10px;">Work Remaining</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="item in project.data" ng-click="workMonitor.openWorkItem(item)" class="tm-clickable work-workitem">
+                                        <td title="{{item.type}}"><span class="work-workitem-type-icon" ng-class="item.type === 'Bug' ? 'bug': 'pbi'"></span></td>
+                                        <td>{{item.workItemID}}</td>
+                                        <td>{{item.assignee}}</td>
+                                        <td>{{item.state}}</td>
+                                        <td>{{item.title}}</td>
+                                        <td style="text-align:right;padding-right:10px;">{{(item.workRemaining.development +  item.workRemaining.testing) | tmZeroToNull : acFormatNumber : {minPrecision: 0, maxPrecision: 2} }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
 </div>
 <style>
+    @media all and (min-width: 1200px) {
+        div.work-project-list-column {
+            float: left;
+            width: 275px;
+            margin-right: 20px;
+        }
+
+        div.work-table-column {
+            float: left;
+            width: calc(100% - 275px - 20px - 5px);
+        }
+
+            div.work-table-column > div {
+                display: block;
+            }
+    }
+
+    @media all and (max-width: 1200px) {
+        div.work-project-list-column > div {
+            float: left;
+            width: 275px;
+            margin-right: 20px;
+        }
+
+        div.work-table-column {
+            width: 100%;
+        }
+
+        div.work-project {
+            height: 90px;
+        }
+
+        div.work-table-column > div {
+            display: inline-block;
+        }
+    }
+
+    div.work-project {
+        border: 1px solid rgb(189, 180, 180);
+        border-radius: 4px;
+        padding: 10px;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        cursor: pointer;
+        font-size: 10pt;
+    }
+
+        div.work-project.active,
+        div.work-project:hover {
+            background-color: #cbd1d7;
+        }
+
+        div.work-project > div.work-project-title {
+            font-size: 13pt;
+            font-weight: bold;
+        }
+
+        div.work-project > div > span.work-project-data {
+            font-size: 12pt;
+        }
+
+
     div.work-project-header {
         border-bottom: 1px solid black;
         margin: 5px;
