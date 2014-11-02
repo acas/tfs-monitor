@@ -1,18 +1,25 @@
 ﻿tfsMonitor.controller('work-monitor-controller', ['$http', '$scope', '$window', '$timeout', '$interval', 'tmMonitor',
 	function ($http, $scope, $window, $timeout, $interval, tmMonitor) {
+		var options = {
+			reverse:false,
+			groupByField: 'project',
+			sortByField: 'state',
+			collapseOptions:false
+		}
+
 		$scope.workMonitor = new function () {
 			var utilities = {
 				loadData: function (data) {
 					$scope.$apply(function () {
-						var grouped = _.groupBy(_.sortBy(data, 'state'), 'project')
+						var grouped = utilities.group(utilities.sort(data))
 						var processed = []
 
 						for (var group in grouped) {
 							processed.push({
-								name: group,
-								data: grouped[group],
-								count: grouped[group].length,
-								workRemaining: _.reduce(grouped[group], function (memo, item) { return memo += (item.workRemaining.development || 0) + (item.workRemaining.testing || 0) }, 0)
+								name: grouped[group].name,
+								data: grouped[group].group,
+								count: grouped[group].group.length,
+								workRemaining: _.reduce(grouped[group].group, function (memo, item) { return memo += (item.workRemaining.development || 0) + (item.workRemaining.testing || 0) }, 0)
 							})
 						}
 						api.groups = processed
@@ -27,6 +34,25 @@
 					})
 				},
 
+
+				sort: function (data) {
+					data = _.sortBy(data, function (item) { return item[options.sortByField] })
+					if (options.reverse) {
+						data.reverse()
+					}
+					return data
+				},
+
+				group: function (data) {
+					var object = _.groupBy(data, function (item) { return item[options.groupByField] })
+					var result = []
+					for (var prop in object) {
+						result.push({ name: prop, group: object[prop] })
+					}
+					result = _.sortBy(result, 'name')
+					return result
+				},
+
 				monitor: tmMonitor('workMonitorHub', $scope),
 				connect: function (firstTry) {
 					this.monitor.connect(firstTry)
@@ -34,7 +60,7 @@
 			}
 
 			var api = {
-				settings: {groupByName: 'Projects'},
+				options: options,
 				groupCollapse: {},
 				serverError: function () { return utilities.monitor.serverError },
 				connecting: function () { return utilities.monitor.connecting },
@@ -44,6 +70,29 @@
 					utilities.connect(false)
 				},
 
+				sortBy: function (sortBy) {
+					if (sortBy === options.sortByField) {
+						options.reverse = !options.reverse
+					}
+					options.sortByField = sortBy
+					var data = _.flatten(_.map(api.groups, function (x) { return x.builds }))
+					api.groups = utilities.group(utilities.sort(data))
+					$window.localStorage.setItem("tfs-monitor.workMonitor.options", angular.toJson(options))
+
+				},
+
+				groupBy: function (groupBy) {
+					options.groupByField = groupBy
+					var data = _.flatten(_.map(api.groups, function (x) { return x.builds }))
+					api.groups = utilities.group(utilities.sort(data))
+					$window.localStorage.setItem("tfs-monitor.workMonitor.options", angular.toJson(options))
+
+				},
+
+				toggleCollapseOptions: function () {
+					options.collapseOptions = !options.collapseOptions
+					$window.localStorage.setItem("tfs-monitor.workMonitor.options", angular.toJson(options))
+				},
 
 
 				openWorkItem: function (workItem) {

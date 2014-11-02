@@ -8,12 +8,30 @@
         Shoot, the server is having trouble finding the work item information in TFS. The data you see on the screen may be a bit out of date.
         (This message will disappear as soon as the server sorts its issues out. Please be patient and extend your unconditional love and support during this challenging time. Thanks.)
     </div>
+    <div class="options" collapse="workMonitor.options.collapseOptions">
+        <div class="row well">
+            <div class="col-sm-4">
+                Sort by:
+                <a ng-click="workMonitor.sortBy('state')">State</a> &nbsp;
+                <a ng-click="workMonitor.sortBy('project')">Project</a> &nbsp;
+                <a ng-click="workMonitor.sortBy('assignee')">Assignee</a>
+            </div>
+            <div class="col-sm-4">
+                Group by:
+                <a ng-click="workMonitor.groupBy('project')">Project</a> &nbsp;
+                <a ng-click="workMonitor.groupBy('state')">State</a> &nbsp;
+                <a ng-click="workMonitor.groupBy('assignee')">Assignee</a> &nbsp;
+                <a ng-click="workMonitor.groupBy('')">None</a>
+            </div>
+        </div>
+    </div>
+    <div align="center"><span ng-click="workMonitor.toggleCollapseOptions()" class="collapseOptions-icon glyphicon" ng-class="workMonitor.options.collapseOptions ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span></div>
     <div class="container-fluid">
         <div>
             <div class="work-group-list-column">
                 <div class="work-group" ng-click="workMonitor.selectedGroup = undefined"
                      ng-class="{'active': workMonitor.selectedGroup === undefined}">
-                    <div class="work-group-title">All {{workMonitor.settings.groupByName}}</div>
+                    <div class="work-group-title">All {{workMonitor.options.groupByName}}</div>
                 </div>
                 <div ng-repeat="group in workMonitor.groups" class="work-group" ng-click="workMonitor.selectedGroup = group.name; workMonitor.groupCollapse[group.name] = false"
                      ng-class="{'active': workMonitor.selectedGroup === group.name}">
