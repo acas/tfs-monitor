@@ -6,15 +6,16 @@
 					$scope.$apply(function () {
 						var grouped = _.groupBy(_.sortBy(data, 'state'), 'project')
 						var processed = []
-						for (var project in grouped) {
+
+						for (var group in grouped) {
 							processed.push({
-								name: project,
-								data: grouped[project],
-								count: grouped[project].length,
-								workRemaining: _.reduce(grouped[project], function (memo, item) { return memo += (item.workRemaining.development || 0) + (item.workRemaining.testing || 0) }, 0)
+								name: group,
+								data: grouped[group],
+								count: grouped[group].length,
+								workRemaining: _.reduce(grouped[group], function (memo, item) { return memo += (item.workRemaining.development || 0) + (item.workRemaining.testing || 0) }, 0)
 							})
 						}
-						api.projects = processed
+						api.groups = processed
 					})
 				},
 
@@ -33,7 +34,8 @@
 			}
 
 			var api = {
-				projectCollapse: {},
+				settings: {groupByName: 'Projects'},
+				groupCollapse: {},
 				serverError: function () { return utilities.monitor.serverError },
 				connecting: function () { return utilities.monitor.connecting },
 				connected: function () { return utilities.monitor.connected },				

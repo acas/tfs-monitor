@@ -10,31 +10,31 @@
     </div>
     <div class="container-fluid">
         <div>
-            <div class="work-project-list-column">
-                <div class="work-project" ng-click="workMonitor.selectedProject = undefined"
-                     ng-class="{'active': workMonitor.selectedProject === undefined}">
-                    <div class="work-project-title">All Projects</div>
+            <div class="work-group-list-column">
+                <div class="work-group" ng-click="workMonitor.selectedGroup = undefined"
+                     ng-class="{'active': workMonitor.selectedGroup === undefined}">
+                    <div class="work-group-title">All {{workMonitor.settings.groupByName}}</div>
                 </div>
-                <div ng-repeat="project in workMonitor.projects" class="work-project" ng-click="workMonitor.selectedProject = project.name; workMonitor.projectCollapse[project.name] = false"
-                     ng-class="{'active': workMonitor.selectedProject === project.name}">
-                    <div class="work-project-title">{{project.name}}</div>
-                    <div><span class="work-project-data">{{project.data.length}}</span> items outstanding</div>
-                    <div><span class="work-project-data">{{project.workRemaining | acFormatNumber: {minPrecision: 0, maxPrecision: 2} }}</span> hours</div>
+                <div ng-repeat="group in workMonitor.groups" class="work-group" ng-click="workMonitor.selectedGroup = group.name; workMonitor.groupCollapse[group.name] = false"
+                     ng-class="{'active': workMonitor.selectedGroup === group.name}">
+                    <div class="work-group-title">{{group.name}}</div>
+                    <div><span class="work-group-data">{{group.data.length}}</span> items outstanding</div>
+                    <div><span class="work-group-data">{{group.workRemaining | acFormatNumber: {minPrecision: 0, maxPrecision: 2} }}</span> hours</div>
                 </div>
             </div>
             <div class="work-table-column">
                 <div>
-                    <div ng-repeat="project in workMonitor.projects | filter : {name: workMonitor.selectedProject} ">
-                        <div class="row work-project-header tm-clickable " ng-click="workMonitor.projectCollapse[project.name] = !workMonitor.projectCollapse[project.name]">
-                            <span class="pull-left work-project-header">{{project.name}}</span>
+                    <div ng-repeat="group in workMonitor.groups | filter : {name: workMonitor.selectedGroup} ">
+                        <div class="row work-group-header tm-clickable " ng-click="workMonitor.groupCollapse[group.name] = !workMonitor.groupCollapse[group.name]">
+                            <span class="pull-left work-group-header">{{group.name}}</span>
                             <span class="pull-right">
-                                {{project.data.length}} item<span ng-show="project.data.length !== 1">s</span> outstanding
-                                - {{project.workRemaining |  acFormatNumber : {minPrecision: 0, maxPrecision: 2} }} hours
+                                {{group.data.length}} item<span ng-show="group.data.length !== 1">s</span> outstanding
+                                - {{group.workRemaining |  acFormatNumber : {minPrecision: 0, maxPrecision: 2} }} hours
                             </span>
                         </div>
-                        <div collapse="workMonitor.projectCollapse[project.name]">
-                            <div class="work-no-workitems" ng-show="!project.data.length"><span style="font-size:16pt;">Congratulations!</span> <br />There are no items remaining in the current sprint.</div>
-                            <table class="table table-condensed table-striped" ng-show="project.data.length">
+                        <div collapse="workMonitor.groupCollapse[group.name]">
+                            <div class="work-no-workitems" ng-show="!group.data.length"><span style="font-size:16pt;">Congratulations!</span> <br />There are no items remaining in the current sprint.</div>
+                            <table class="table table-condensed table-striped" ng-show="group.data.length">
                                 <thead>
                                     <tr>
                                         <th style="width:25px;"></th>
@@ -46,7 +46,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="item in project.data" ng-click="workMonitor.openWorkItem(item)" class="tm-clickable work-workitem">
+                                    <tr ng-repeat="item in group.data" ng-click="workMonitor.openWorkItem(item)" class="tm-clickable work-workitem">
                                         <td title="{{item.type}}"><span class="work-workitem-type-icon" ng-class="item.type === 'Bug' ? 'bug': 'pbi'"></span></td>
                                         <td>{{item.workItemID}}</td>
                                         <td>{{item.assignee}}</td>
@@ -61,12 +61,11 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 <style>
     @media all and (min-width: 1200px) {
-        div.work-project-list-column {
+        div.work-group-list-column {
             float: left;
             width: 275px;
             margin-right: 20px;
@@ -83,7 +82,7 @@
     }
 
     @media all and (max-width: 1200px) {
-        div.work-project-list-column > div {
+        div.work-group-list-column > div {
             float: left;
             width: 275px;
             margin-right: 20px;
@@ -93,7 +92,7 @@
             width: 100%;
         }
 
-        div.work-project {
+        div.work-group {
             height: 90px;
         }
 
@@ -102,7 +101,7 @@
         }
     }
 
-    div.work-project {
+    div.work-group {
         border: 1px solid rgb(189, 180, 180);
         border-radius: 4px;
         padding: 10px;
@@ -112,28 +111,28 @@
         font-size: 10pt;
     }
 
-        div.work-project.active,
-        div.work-project:hover {
+        div.work-group.active,
+        div.work-group:hover {
             background-color: #cbd1d7;
         }
 
-        div.work-project > div.work-project-title {
+        div.work-group > div.work-group-title {
             font-size: 13pt;
             font-weight: bold;
         }
 
-        div.work-project > div > span.work-project-data {
+        div.work-group > div > span.work-group-data {
             font-size: 12pt;
         }
 
 
-    div.work-project-header {
+    div.work-group-header {
         border-bottom: 1px solid black;
         margin: 5px;
         margin-bottom: 20px;
     }
 
-    span.work-project-header {
+    span.work-group-header {
         font-size: 16pt;
         color: black;
     }
