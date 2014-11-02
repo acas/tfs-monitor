@@ -4,12 +4,12 @@
 			var utilities = {
 				loadData: function (data) {
 					$scope.$apply(function () {
-						var grouped = _.groupBy(_.sortBy(data, 'state'), 'project')
+						var grouped = _.groupBy(_.sortBy(data, 'state'), 'assignee')
 						var processed = []
-						for (var project in grouped) {
-							processed.push({ name: project, data: grouped[project] })							
+						for (var group in grouped) {
+							processed.push({ name: group, data: grouped[group]})
 						}
-						api.projects = processed
+						api.groups = processed
 					})
 				},
 
@@ -28,7 +28,7 @@
 			}
 
 			var api = {
-				projectCollapse: {},
+				groupCollapse: {},
 				serverError: utilities.monitor.serverError,
 				connecting: utilities.monitor.connecting,
 				connected: utilities.monitor.connected,
