@@ -1,9 +1,19 @@
 ﻿<div ng-controller="work-monitor-controller">
+    <div class="error" ng-class="{'active': !workMonitor.connected()}" align="center">
+        Uh-oh. You seem to have lost your connection with the server.
+        <a ng-click="workMonitor.connect()" ng-show="!workMonitor.connecting()">Retry</a>
+        <span ng-show="workMonitor.connecting()" style="font-style:italic">Connecting...</span>
+    </div>
+    <div class="error" ng-class="{'active': workMonitor.serverError()}" align="center">
+        Shoot, the server is having trouble finding the work item information in TFS. The data you see on the screen may be a bit out of date.
+        (This message will disappear as soon as the server sorts its issues out. Please be patient and extend your unconditional love and support during this challenging time. Thanks.)
+    </div>
     <div class="container-fluid">
         <div ng-repeat="group in workMonitor.groups">
             <div class="row work-group-header tm-clickable " ng-click="workMonitor.groupCollapse[group.name] = !workMonitor.groupCollapse[group.name]">
                 <span class="pull-left work-group-header">{{group.name}}</span>
                 <span class="pull-right">{{group.data.length}} item<span ng-show="group.data.length !== 1">s</span> outstanding</span>
+
             </div>
             <div collapse="workMonitor.groupCollapse[group.name]">
                 <div class="work-no-workitems" ng-show="!group.data.length"><span style="font-size:16pt;">Congratulations!</span> <br />There are no items remaining in the current sprint.</div>
@@ -11,6 +21,7 @@
                     <thead>
                         <tr>
                             <th style="width:25px;"></th>
+                            <th style="width:70px;">ID</th>
                             <th style="width:250px;">Assigned To</th>
                             <th style="width:120px;">State</th>
                             <th>Title</th>
@@ -19,6 +30,7 @@
                     <tbody>
                         <tr ng-repeat="item in group.data" ng-click="workMonitor.openWorkItem(item)" class="tm-clickable work-workitem">
                             <td title="{{item.type}}"><span class="work-workitem-type-icon" ng-class="item.type === 'Bug' ? 'bug': 'pbi'"></span></td>
+                            <td>{{item.workItemID}}</td>
                             <td>{{item.assignee}}</td>
                             <td>{{item.state}}</td>
                             <td>{{item.title}}</td>

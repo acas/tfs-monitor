@@ -21,17 +21,18 @@
 					})
 				},
 
-				monitor: tmMonitor('workMonitorHub'),
-				connect: function () {
-					this.monitor.connect()
+				monitor: tmMonitor('workMonitorHub', $scope),
+				connect: function (firstTry) {
+					this.monitor.connect(firstTry)
 				}
 			}
 
 			var api = {
+
 				groupCollapse: {},
-				serverError: utilities.monitor.serverError,
-				connecting: utilities.monitor.connecting,
-				connected: utilities.monitor.connected,
+				serverError: function () { return utilities.monitor.serverError },
+				connecting: function () { return utilities.monitor.connecting },
+				connected: function () { return utilities.monitor.connected },				
 
 				connect: function () {
 					utilities.connect(false)
@@ -39,8 +40,8 @@
 
 
 
-				openWorkItem: function (workItem) {					
-					$window.open(tfsMonitor.projectCollectionUrl + '/' + workItem.project + '/_workitems#id=' + workItem.workItemID + '&_a=edit' )
+				openWorkItem: function (workItem) {
+					$window.open(tfsMonitor.projectCollectionUrl + '/' + workItem.project + '/_workitems#id=' + workItem.workItemID + '&_a=edit')
 				}
 			}
 
