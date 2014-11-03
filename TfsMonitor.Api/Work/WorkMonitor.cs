@@ -86,9 +86,9 @@ namespace TfsMonitor.Api.Work
 						});
 					}
 					else
-					{						
+					{
 						if (node.FirstChild != null)
-						{							
+						{
 							for (int child = 0; child < node.ChildNodes[0].ChildNodes.Count; child++)
 							{
 								FindCurrentIteration(node.ChildNodes[0].ChildNodes[child], projectName, result);
@@ -138,17 +138,17 @@ namespace TfsMonitor.Api.Work
 						and System.TeamProject = @Project and System.IterationPath = @IterationPath",
 							parameters
 					   );
-					
+
 					foreach (Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem workItem in queryResults)
-					{	
+					{
 						//TODO this is really slow. ALl the queries should be combined into one, with dataprocessing on the
 						//performed here to figure all this stuff out
-						Dictionary<Activity, double> workRemaining = new Dictionary<Activity,double>();
+						Dictionary<Activity, double> workRemaining = new Dictionary<Activity, double>();
 						foreach (WorkItemLink link in workItem.WorkItemLinks)
 						{
 							if (link.LinkTypeEnd.Name == "Child")
 							{
-								var item = workItemStore.GetWorkItem(link.TargetId);								
+								var item = workItemStore.GetWorkItem(link.TargetId);
 								var value = item.Fields["Remaining Work"].Value;
 								if (value != null)
 								{
@@ -159,9 +159,9 @@ namespace TfsMonitor.Api.Work
 									}
 									workRemaining[activity] += double.Parse(value.ToString());
 								}
-								
+
 							}
-						}
+						}						
 						result.Add(new WorkItem()
 						{
 							Title = workItem.Title,

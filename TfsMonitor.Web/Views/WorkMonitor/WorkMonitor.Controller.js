@@ -75,7 +75,7 @@
 						options.reverse = !options.reverse
 					}
 					options.sortByField = sortBy
-					var data = _.flatten(_.map(api.groups, function (x) { return x.builds }))
+					var data = _.flatten(_.map(api.groups, function (x) { return x.data }))
 					api.groups = utilities.group(utilities.sort(data))
 					$window.localStorage.setItem("tfs-monitor.workMonitor.options", angular.toJson(options))
 
@@ -83,7 +83,7 @@
 
 				groupBy: function (groupBy) {
 					options.groupByField = groupBy
-					var data = _.flatten(_.map(api.groups, function (x) { return x.builds }))
+					var data = _.flatten(_.map(api.groups, function (x) { return x.data }))
 					api.groups = utilities.group(utilities.sort(data))
 					$window.localStorage.setItem("tfs-monitor.workMonitor.options", angular.toJson(options))
 
