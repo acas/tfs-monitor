@@ -18,7 +18,7 @@
 				},
 
 				initialize: function () {
-					_.extend(options, JSON.parse($window.localStorage["tfs-monitor.workMonitor.options"]))
+					_.extend(options, JSON.parse($window.localStorage.getItem("tfs-monitor.workMonitor.options")))
 					utilities.monitor.setLoadDataFn(utilities.loadData)
 					utilities.connect(true)
 					$scope.$on('$destroy', function () {
