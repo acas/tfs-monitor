@@ -12,21 +12,13 @@
 				loadData: function (data) {
 					$scope.$apply(function () {
 						var grouped = utilities.group(utilities.sort(data))
-						var processed = []
-
-						for (var group in grouped) {
-							processed.push({
-								name: grouped[group].name,
-								data: grouped[group].group,
-								count: grouped[group].group.length,
-								workRemaining: _.reduce(grouped[group].group, function (memo, item) { return memo += (item.workRemaining.development || 0) + (item.workRemaining.testing || 0) }, 0)
-							})
-						}
+						var processed = utilities.process(grouped)						
 						api.groups = processed
 					})
 				},
 
 				initialize: function () {
+					_.extend(options, JSON.parse($window.localStorage["tfs-monitor.workMonitor.options"]))
 					utilities.monitor.setLoadDataFn(utilities.loadData)
 					utilities.connect(true)
 					$scope.$on('$destroy', function () {
@@ -47,10 +39,27 @@
 					var object = _.groupBy(data, function (item) { return item[options.groupByField] })
 					var result = []
 					for (var prop in object) {
-						result.push({ name: prop, group: object[prop] })
+						var name = prop
+						if (options.groupByField === 'assignee' & !prop) {
+							name = 'Unassigned'
+						}
+						result.push({ name: name, group: object[prop] })
 					}
 					result = _.sortBy(result, 'name')
 					return result
+				},
+
+				process: function(data){
+					var processed = []
+					for (var group in data) {
+						processed.push({
+							name: data[group].name,
+							data: data[group].group,
+							count: data[group].group.length,
+							workRemaining: _.reduce(data[group].group, function (memo, item) { return memo += (item.workRemaining.development || 0) + (item.workRemaining.testing || 0) }, 0)
+						})
+					}
+					return processed
 				},
 
 				monitor: tmMonitor('workMonitorHub', $scope),
@@ -76,7 +85,7 @@
 					}
 					options.sortByField = sortBy
 					var data = _.flatten(_.map(api.groups, function (x) { return x.data }))
-					api.groups = utilities.group(utilities.sort(data))
+					api.groups = utilities.process(utilities.group(utilities.sort(data)))
 					$window.localStorage.setItem("tfs-monitor.workMonitor.options", angular.toJson(options))
 
 				},
@@ -84,7 +93,7 @@
 				groupBy: function (groupBy) {
 					options.groupByField = groupBy
 					var data = _.flatten(_.map(api.groups, function (x) { return x.data }))
-					api.groups = utilities.group(utilities.sort(data))
+					api.groups = utilities.process(utilities.group(utilities.sort(data)))
 					$window.localStorage.setItem("tfs-monitor.workMonitor.options", angular.toJson(options))
 
 				},
