@@ -9,13 +9,7 @@
         (This message will disappear as soon as the server sorts its issues out. Please be patient and extend your unconditional love and support during this challenging time. Thanks.)
     </div>
     <div class="options" collapse="workMonitor.options.collapseOptions">
-        <div class="row well">
-            <div class="col-sm-4">
-                Sort by:
-                <a ng-click="workMonitor.sortBy('project')">Project</a> &nbsp;
-                <a ng-click="workMonitor.sortBy('state')">State</a> &nbsp;                
-                <a ng-click="workMonitor.sortBy('assignee')">Assignee</a>
-            </div>
+        <div class="row well">            
             <div class="col-sm-4">
                 Group by:
                 <a ng-click="workMonitor.groupBy('project')">Project</a> &nbsp;
@@ -55,10 +49,10 @@
                                 <thead>
                                     <tr>
                                         <th style="width:25px;"></th>
-                                        <th style="width:70px;">ID</th>
-                                        <th style="width:130px;" ng-show="workMonitor.options.groupByField !== 'project'">Project</th>
-                                        <th style="width:250px;" ng-show="workMonitor.options.groupByField !== 'assignee'">Assigned To</th>
-                                        <th style="width:120px;" ng-show="workMonitor.options.groupByField !== 'state'">State</th>
+                                        <th style="width:70px;"  ng-click="workMonitor.sortBy('workItemID')" class="tm-clickable">ID</th>
+                                        <th style="width:130px;" ng-click="workMonitor.sortBy('project')" class="tm-clickable" ng-show="workMonitor.options.groupByField !== 'project'">Project</th>
+                                        <th style="width:250px;" ng-click="workMonitor.sortBy('assignee')" class="tm-clickable" ng-show="workMonitor.options.groupByField !== 'assignee'">Assigned To</th>
+                                        <th style="width:120px;" ng-click="workMonitor.sortBy('state')" class="tm-clickable" ng-show="workMonitor.options.groupByField !== 'state'">State</th>
                                         <th>Title</th>
                                         <th style="text-align:right;padding-right:10px;">Work Remaining</th>
                                     </tr>
