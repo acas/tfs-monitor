@@ -71,6 +71,7 @@
 			var api = {
 				options: options,
 				groupCollapse: {},
+				
 				serverError: function () { return utilities.monitor.serverError },
 				connecting: function () { return utilities.monitor.connecting },
 				connected: function () { return utilities.monitor.connected },				
