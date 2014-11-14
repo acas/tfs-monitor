@@ -1,18 +1,21 @@
 ﻿tfsMonitor.controller('work-monitor-controller', ['$http', '$scope', '$window', '$timeout', '$interval', 'tmMonitor',
 	function ($http, $scope, $window, $timeout, $interval, tmMonitor) {
 		var options = {
-			reverse:false,
+			reverse: false,
 			groupByField: 'project',
 			sortByField: 'state',
-			collapseOptions:false
+			collapseOptions: false,
+			autoScroll: false
 		}
 
 		$scope.workMonitor = new function () {
 			var utilities = {
+				autoScrollInterval: null,
+
 				loadData: function (data) {
 					$scope.$apply(function () {
 						var grouped = utilities.group(utilities.sort(data))
-						var processed = utilities.process(grouped)						
+						var processed = utilities.process(grouped)
 						api.groups = processed
 					})
 				},
@@ -24,6 +27,9 @@
 					$scope.$on('$destroy', function () {
 						utilities.monitor.stop()
 					})
+					if (options.autoScroll) {
+						api.startAutoScroll()
+					}
 				},
 
 
@@ -49,7 +55,7 @@
 					return result
 				},
 
-				process: function(data){
+				process: function (data) {
 					var processed = []
 					for (var group in data) {
 						processed.push({
@@ -71,10 +77,10 @@
 			var api = {
 				options: options,
 				groupCollapse: {},
-				
+
 				serverError: function () { return utilities.monitor.serverError },
 				connecting: function () { return utilities.monitor.connecting },
-				connected: function () { return utilities.monitor.connected },				
+				connected: function () { return utilities.monitor.connected },
 
 				connect: function () {
 					utilities.connect(false)
@@ -104,9 +110,31 @@
 					$window.localStorage.setItem("tfs-monitor.workMonitor.options", angular.toJson(options))
 				},
 
+				selectGroup: function (name) {
+					this.selectedGroup = name
+					this.groupCollapse[name] = false
+				},
 
 				openWorkItem: function (workItem) {
 					$window.open(tfsMonitor.projectCollectionUrl + '/' + workItem.project + '/_workitems#id=' + workItem.workItemID + '&_a=edit')
+				},
+
+				startAutoScroll: function () {
+					options.autoScroll = true
+					var i = 0
+					var scroll = function () {
+						var groups = _.pluck(api.groups, 'name')
+						var group = groups[i % groups.length]
+						api.selectGroup(group)
+						i++
+					}
+					scroll()
+					utilities.autoScrollInteval = $interval(scroll, 7000)
+				},
+
+				stopAutoScroll: function () {
+					options.autoScroll = false
+					$interval.cancel(utilities.autoScrollInteval)
 				}
 			}
 
