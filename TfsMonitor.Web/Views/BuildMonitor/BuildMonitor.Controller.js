@@ -93,7 +93,7 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 					var object = _.groupBy(data, function (build) { return build[options.groupByField] })
 					var result = []
 					for (var prop in object) {
-						result.push({ name: prop, builds: object[prop] })
+						result.push({ name: prop, builds: object[prop], failureCount: _.filter(object[prop], function (x) { return x.status === 'Failed'}).length })
 					}
 					result = _.sortBy(result, 'name')
 					return result
@@ -124,7 +124,6 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 					utilities.connect(false)
 				},
 
-
 				sortBy: function (sortBy) {
 					if (sortBy === options.sortByField) {
 						options.reverse = !options.reverse
@@ -153,6 +152,34 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 				openBuild: function (build) {
 					var buildNumber = build.buildUri.split('/')[5]
 					$window.open(tfsMonitor.projectCollectionUrl + '/' + build.project + '/_build#buildUri=vstfs%3A%2F%2F%2FBuild%2FBuild%2F' + buildNumber + '&_a=summary')
+				},
+				selectGroup: function (name) {
+					this.selectedGroup = name					
+				},
+				startAutoScroll: function () {
+					options.autoScroll = true					
+					var i = 0
+					var scroll = function () {
+						var groups = _.pluck(api.groups, 'name')
+						var group = groups[i % groups.length]
+						api.selectGroup(group)
+						i++
+					}
+					//start the scroll on a multiple of six seconds. The objective is to sync up multiple 
+					//browser instances running monitors to do the scroll at roughly the same time
+					var now = new Date()
+					var milliseconds = now.getSeconds() * 1000 + now.getMilliseconds()
+					var wait = 6000 - (milliseconds % 6000)
+					$timeout(function () {
+						scroll() //initial scroll
+						//then set up the interval every six seconds
+						utilities.autoScrollInteval = $interval(scroll, 6000)
+					}, wait)
+				},
+
+				stopAutoScroll: function () {
+					options.autoScroll = false
+					$interval.cancel(utilities.autoScrollInteval)
 				}
 			}
 

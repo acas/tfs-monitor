@@ -128,8 +128,17 @@
 						api.selectGroup(group)
 						i++
 					}
-					scroll()
-					utilities.autoScrollInteval = $interval(scroll, 7000)
+					//start the scroll on a multiple of six seconds. The objective is to sync up multiple 
+					//browser instances running monitors to do the scroll at roughly the same time
+					var now = new Date()
+					var milliseconds = now.getSeconds() * 1000 + now.getMilliseconds()
+					var wait = 6000 - (milliseconds % 6000)
+					$timeout(function () {
+						scroll() //initial scroll
+						//then set up the interval every six seconds
+						utilities.autoScrollInteval = $interval(scroll, 6000)
+					}, wait)
+					
 				},
 
 				stopAutoScroll: function () {
