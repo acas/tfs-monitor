@@ -1,8 +1,8 @@
 ﻿
 <div ng-controller="build-monitor-controller">
-    <audio src="Views/Siren1.wav" tm-audio="buildMonitor.failedSound" preload="auto"></audio>
-    <audio src="Views/Siren2.wav" tm-audio="buildMonitor.succeededSound" preload="auto"></audio>
-    <audio src="Views/Siren3.wav" tm-audio="buildMonitor.startSound" preload="auto"></audio>
+    <audio src="Views/smb_gameover.wav" tm-audio="buildMonitor.failedSound" preload="auto"></audio>
+    <!--<audio src="Views/Siren2.wav" tm-audio="buildMonitor.succeededSound" preload="auto"></audio>
+    <audio src="Views/Siren3.wav" tm-audio="buildMonitor.startSound" preload="auto"></audio>-->
 
     <div class="error" ng-class="{'active': !buildMonitor.connected()}" align="center">
         Uh-oh. You seem to have lost your connection with the server.
@@ -30,7 +30,7 @@
             </div>
         </div>
     </div>
-    <div align="center"><span ng-click="buildMonitor.toggleCollapseOptions()" class="collapseOptions-icon glyphicon" ng-class="buildMonitor.options.collapseOptions ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span></div>
+    <div align="center" ng-click="buildMonitor.toggleCollapseOptions()" class="collapseOptions-icon" ><span class=" glyphicon" ng-class="buildMonitor.options.collapseOptions ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span></div>
     <div class="main-section">
         <div ng-repeat="group in buildMonitor.groups" class="group">
             <div class="group-header" ng-show="buildMonitor.groups.length > 1">
@@ -88,7 +88,7 @@
         width: 300px;
         border: 1px solid gray;
         border-radius: 4px;
-        margin: 20px;
+        margin:  0 20px 20px 0;
         padding: 5px;
         cursor: pointer;
     }

@@ -21,13 +21,13 @@ div.error {
 }
 
 .main-section {
-	padding: 100px;
-	padding-top: 0;
+	padding: 50px;
+	padding-top: 20px;
 }
 
 .collapseOptions-icon {
 	font-size: large;
-	opacity: .4;
+	opacity: .03;
 	cursor: pointer;
 }
 
