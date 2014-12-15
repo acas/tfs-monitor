@@ -162,6 +162,7 @@
     <Content Include="Views\Common\tmZeroToNull.Filter.js" />
     <Content Include="Views\Home\Home.Controller.js" />
     <Content Include="Views\Home\Home.html" />
+    <Content Include="Views\smb_gameover.wav" />
     <Content Include="Views\WorkMonitor\WorkMonitor.Controller.js" />
     <Content Include="Views\WorkMonitor\WorkMonitor.html" />
     <Content Include="Web.Private.config" />
@@ -203,6 +204,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\App_Start\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
