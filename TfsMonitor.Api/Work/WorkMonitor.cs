@@ -152,7 +152,10 @@ namespace TfsMonitor.Api.Work
 								var value = item.Fields["Remaining Work"].Value;
 								if (value != null)
 								{
-									Activity activity = (Activity)Enum.Parse(typeof(Activity), item.Fields["Activity"].Value.ToString(), true);
+									//if activity is empty, set to None
+									Activity activity = Activity.None;
+									Enum.TryParse<Activity>(item.Fields["Activity"].Value.ToString(), true, out activity);
+
 									if (!workRemaining.ContainsKey(activity))
 									{
 										workRemaining.Add(activity, 0);
@@ -161,7 +164,7 @@ namespace TfsMonitor.Api.Work
 								}
 
 							}
-						}						
+						}
 						result.Add(new WorkItem()
 						{
 							Title = workItem.Title,

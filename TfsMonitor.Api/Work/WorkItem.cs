@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace TfsMonitor.Api.Work
 {
-	public enum Activity { Development, Testing, Deployment, Design, Documentation, Requirements }
+	public enum Activity { Development, Testing, Deployment, Design, Documentation, Requirements, None }
 	public class WorkItem : ICloneable
 	{
 		public int WorkItemID { get; set; }
