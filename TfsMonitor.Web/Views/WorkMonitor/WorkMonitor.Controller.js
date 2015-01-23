@@ -121,6 +121,7 @@
 
 				startAutoScroll: function () {
 					options.autoScroll = true
+					$window.localStorage.setItem("tfs-monitor.workMonitor.options", angular.toJson(options))
 					var i = 0
 					var scroll = function () {
 						var groups = _.pluck(api.groups, 'name')
@@ -143,6 +144,7 @@
 
 				stopAutoScroll: function () {
 					options.autoScroll = false
+					$window.localStorage.setItem("tfs-monitor.workMonitor.options", angular.toJson(options))
 					$interval.cancel(utilities.autoScrollInteval)
 				}
 			}

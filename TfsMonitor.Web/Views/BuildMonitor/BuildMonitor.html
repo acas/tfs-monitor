@@ -54,8 +54,8 @@
             </div>
         </div>
         <div class="work-table-column" ng-class="{'fill': !buildMonitor.options.groupByField}">
-            <div ng-repeat="group in buildMonitor.groups  | filter : {name: buildMonitor.selectedGroup}" class=" group">
-                <div class="group-header" ng-show="buildMonitor.groups.length > 1">
+            <div ng-repeat="group in buildMonitor.groups  | filter : {name: buildMonitor.selectedGroup}" class="group">
+                <div class="group-header" ng-show="!buildMonitor.selectedGroup">
                     {{group.name}}
                 </div>
 
@@ -111,7 +111,7 @@
             }
 
             div.work-table-column > div {
-                display: block;
+                
             }
     }
 
@@ -183,6 +183,7 @@
 
     .group-header {
         font-size: large;
+        
     }
 
     .build {

@@ -105,6 +105,9 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 					$scope.$on('$destroy', function () {
 						utilities.monitor.stop()
 					})
+					if (options.autoScroll) {
+						api.startAutoScroll()
+					}
 				},
 			
 				monitor: tmMonitor('buildMonitorHub', $scope),
@@ -157,7 +160,8 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 					this.selectedGroup = name					
 				},
 				startAutoScroll: function () {
-					options.autoScroll = true					
+					options.autoScroll = true
+					$window.localStorage.setItem("tfs-monitor.buildMonitor.options", angular.toJson(options))
 					var i = 0
 					var scroll = function () {
 						var groups = _.pluck(api.groups, 'name')
@@ -179,6 +183,7 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 
 				stopAutoScroll: function () {
 					options.autoScroll = false
+					$window.localStorage.setItem("tfs-monitor.buildMonitor.options", angular.toJson(options))
 					$interval.cancel(utilities.autoScrollInteval)
 				}
 			}
