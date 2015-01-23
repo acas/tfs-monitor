@@ -44,11 +44,17 @@
                 <div class="work-group-title">All</div>
             </div>
             <div ng-repeat="group in buildMonitor.groups" class="work-group" ng-click="buildMonitor.selectGroup(group.name)"
-                 ng-class="{'active': buildMonitor.selectedGroup === group.name, 'failure': group.failureCount}">
+                 ng-class="{'active': buildMonitor.selectedGroup === group.name, 'failure': group.failureCount, 'success': !group.failureCount && !group.inProgressCount, 'running': group.inProgressCount}">
                 <div class="work-group-title">
                     {{group.name}}
-                    <span class="pull-right" ng-show="group.failureCount" style="color:red;">
-                        <span class="glyphicon glyphicon-remove"></span>                        
+                    <span class="pull-right failure" ng-show="group.failureCount">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </span>
+                    <span class="pull-right success" ng-show="!group.failureCount && !group.inProgressCount">
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </span>
+                    <span class="pull-right running" ng-show="group.inProgressCount">
+                        <span class="glyphicon glyphicon-wrench"></span>
                     </span>
                 </div>
             </div>
@@ -111,7 +117,6 @@
             }
 
             div.work-table-column > div {
-                
             }
     }
 
@@ -183,7 +188,6 @@
 
     .group-header {
         font-size: large;
-        
     }
 
     .build {
@@ -204,15 +208,23 @@
             border-color: red;
         }
 
-            .build.failure > .build-definition {
-                color: red;
-            }
+        .build.success, .work-group.success {
+            border-color: green;
+        }
 
-        .build.success > .build-definition {
+        .build.running, .work-group.running {
+            border-color: blue;
+        }
+
+        .build.failure > .build-definition, .work-group-title > span.failure {
+            color: red;
+        }
+
+        .build.success > .build-definition, .work-group-title > span.success {
             color: green;
         }
 
-        .build.running > .build-definition {
+        .build.running > .build-definition, .work-group-title > span.running {
             color: blue;
         }
 

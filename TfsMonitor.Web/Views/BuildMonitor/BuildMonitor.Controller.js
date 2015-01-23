@@ -93,7 +93,11 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 					var object = _.groupBy(data, function (build) { return build[options.groupByField] })
 					var result = []
 					for (var prop in object) {
-						result.push({ name: prop, builds: object[prop], failureCount: _.filter(object[prop], function (x) { return x.status === 'Failed'}).length })
+						result.push({
+							name: prop, builds: object[prop],
+							failureCount: _.filter(object[prop], function (x) { return x.status === 'Failed' }).length,
+							inProgressCount: _.filter(object[prop], function (x) { return x.status === 'InProgress' }).length							
+						})
 					}
 					result = _.sortBy(result, 'name')
 					return result
