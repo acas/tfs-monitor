@@ -162,7 +162,11 @@
     <Content Include="Views\Common\tmZeroToNull.Filter.js" />
     <Content Include="Views\Home\Home.Controller.js" />
     <Content Include="Views\Home\Home.html" />
+    <Content Include="Views\smb_1-up.wav" />
+    <Content Include="Views\smb_coin.wav" />
     <Content Include="Views\smb_gameover.wav" />
+    <Content Include="Views\smb_jump-super.wav" />
+    <Content Include="Views\smb_mariodie.wav" />
     <Content Include="Views\WorkMonitor\WorkMonitor.Controller.js" />
     <Content Include="Views\WorkMonitor\WorkMonitor.html" />
     <Content Include="Web.Private.config" />
@@ -186,10 +190,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Views\Common\tmTimeSpan.Filter.js" />
-    <Content Include="Views\Siren1.wav" />
     <Content Include="Views\BuildMonitor\BuildMonitor.Controller.js" />
-    <Content Include="Views\Siren2.wav" />
-    <Content Include="Views\Siren3.wav" />
     <Content Include="Web.config" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\BuildMonitor\BuildMonitor.html" />

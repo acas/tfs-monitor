@@ -1,8 +1,8 @@
 ﻿
 <div ng-controller="build-monitor-controller">
     <audio src="Views/smb_gameover.wav" tm-audio="buildMonitor.failedSound" preload="auto"></audio>
-    <!--<audio src="Views/Siren2.wav" tm-audio="buildMonitor.succeededSound" preload="auto"></audio>
-    <audio src="Views/Siren3.wav" tm-audio="buildMonitor.startSound" preload="auto"></audio>-->
+    <audio src="Views/smb_coin.wav" tm-audio="buildMonitor.succeededSound" preload="auto"></audio>
+    <!--<audio src="" tm-audio="buildMonitor.startSound" preload="auto"></audio>-->
 
     <div class="error" ng-class="{'active': !buildMonitor.connected()}" align="center">
         Uh-oh. You seem to have lost your connection with the server.
