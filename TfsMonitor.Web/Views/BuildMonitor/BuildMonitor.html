@@ -44,18 +44,20 @@
                 <div class="work-group-title">All</div>
             </div>
             <div ng-repeat="group in buildMonitor.groups" class="work-group" ng-click="buildMonitor.selectGroup(group.name)"
-                 ng-class="{'active': buildMonitor.selectedGroup === group.name, 'failure': group.failureCount, 'success': !group.failureCount && !group.inProgressCount, 'running': group.inProgressCount}">
+                 ng-class="{'active': buildMonitor.selectedGroup === group.name, 'running': group.inProgressCount, 'failure': group.failureCount, 'success': !group.failureCount && !group.inProgressCount}">
                 <div class="work-group-title">
                     {{group.name}}
                     <span class="pull-right failure" ng-show="group.failureCount">
                         <span class="glyphicon glyphicon-remove"></span>
                     </span>
+                    <span class="pull-right running" ng-show="group.inProgressCount">
+                        <span class="glyphicon glyphicon-wrench"></span>
+                    </span>                    
+                    <!--don't show success unless there's nothing running or failed-->
                     <span class="pull-right success" ng-show="!group.failureCount && !group.inProgressCount">
                         <span class="glyphicon glyphicon-ok"></span>
                     </span>
-                    <span class="pull-right running" ng-show="group.inProgressCount">
-                        <span class="glyphicon glyphicon-wrench"></span>
-                    </span>
+
                 </div>
             </div>
         </div>
@@ -204,10 +206,7 @@
             background-color: lightblue;
         }
 
-        .build.failure, .work-group.failure {
-            border-color: red;
-        }
-
+        /*the order here matters - red overrules blue, which overrules green*/
         .build.success, .work-group.success {
             border-color: green;
         }
@@ -216,8 +215,8 @@
             border-color: blue;
         }
 
-        .build.failure > .build-definition, .work-group-title > span.failure {
-            color: red;
+        .build.failure, .work-group.failure {
+            border-color: red;
         }
 
         .build.success > .build-definition, .work-group-title > span.success {
@@ -227,6 +226,11 @@
         .build.running > .build-definition, .work-group-title > span.running {
             color: blue;
         }
+        
+        .build.failure > .build-definition, .work-group-title > span.failure {
+            color: red;
+        }
+
 
     .build-definition {
         font-size: large;

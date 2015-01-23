@@ -96,7 +96,7 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 						result.push({
 							name: prop, builds: object[prop],
 							failureCount: _.filter(object[prop], function (x) { return x.status === 'Failed' }).length,
-							inProgressCount: _.filter(object[prop], function (x) { return x.status === 'InProgress' }).length							
+							inProgressCount: _.filter(object[prop], function (x) { return x.status === 'In Progress' }).length							
 						})
 					}
 					result = _.sortBy(result, 'name')
