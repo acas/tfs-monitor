@@ -38,10 +38,10 @@
     </div>
     <div align="center" ng-click="buildMonitor.toggleCollapseOptions()" class="collapseOptions-icon"><span class=" glyphicon" ng-class="buildMonitor.options.collapseOptions ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span></div>
     <div class="container-fluid">
-        <div class="work-group-list-column" ng-show="buildMonitor.options.groupByField">
-            <div class="work-group" ng-click="buildMonitor.selectedGroup = undefined"
+        <div class="group-list-column" ng-show="buildMonitor.options.groupByField">
+            <div class="group" ng-click="buildMonitor.selectedGroup = undefined"
                  ng-class="{'active': buildMonitor.selectedGroup === undefined}">
-                <div class="work-group-title">All</div>
+                <div class="group-title">All</div>
             </div>
             <div ng-repeat="group in buildMonitor.groups" class="work-group" ng-click="buildMonitor.selectGroup(group.name)"
                  ng-class="{'active': buildMonitor.selectedGroup === group.name, 'running': group.inProgressCount, 'failure': group.failureCount, 'success': !group.failureCount && !group.inProgressCount}">
@@ -103,7 +103,7 @@
 
 <style>
     @media all and (min-width: 1200px) {
-        div.work-group-list-column {
+        div.group-list-column {
             float: left;
             width: 225px;
             margin-right: 20px;
@@ -123,7 +123,7 @@
     }
 
     @media all and (max-width: 1200px) {
-        div.work-group-list-column > div {
+        div.group-list-column > div {
             float: left;
             width: 225px;
             margin-right: 20px;
@@ -133,7 +133,7 @@
             width: 100%;
         }
 
-        div.work-group {
+        div.group {
             height: 90px;
         }
 
@@ -142,7 +142,7 @@
         }
     }
 
-    div.work-group {
+    div.group-list-column > div.group {
         border: 1px solid rgb(189, 180, 180);
         -moz-border-radius: 4px;
         -webkit-border-radius: 4px;
@@ -152,30 +152,29 @@
         margin-top: 10px;
         cursor: pointer;
         font-size: 10pt;
+        width:100%;
     }
 
-        div.work-group.active,
-        div.work-group:hover {
+        div.group-list-column > div.group.active,
+        div.group-list-column > div.group:hover {
             background-color: #cbd1d7;
         }
 
-        div.work-group > div.work-group-title {
+        div.group > div.group-title {
             font-size: 13pt;
             font-weight: bold;
         }
 
-        div.work-group > div > span.work-group-data {
+        div.group > div > span.group-data {
             font-size: 12pt;
         }
 
 
-    div.work-group-header {
-        border-bottom: 1px solid black;
-        margin: 5px;
-        margin-bottom: 20px;
+    div.group-header {        
+        margin: 5px;        
     }
 
-    span.work-group-header {
+    span.group-header {
         font-size: 16pt;
         color: black;
     }
@@ -206,31 +205,31 @@
             background-color: lightblue;
         }
 
+
         /*the order here matters - red overrules blue, which overrules green*/
-        .build.success, .work-group.success {
-            border-color: green;
+        .build.success, .group.success {
+            border-color: green !important;
         }
 
-        .build.running, .work-group.running {
-            border-color: blue;
+        .build.running, .group.running {
+            border-color: blue !important;
         }
 
-        .build.failure, .work-group.failure {
-            border-color: red;
+		.build.failure, .group.failure {
+            border-color: red !important;
         }
 
-        .build.success > .build-definition, .work-group-title > span.success {
+        .build.success > .build-definition, .group-title > span.success {
             color: green;
         }
 
-        .build.running > .build-definition, .work-group-title > span.running {
+        .build.running > .build-definition, .group-title > span.running {
             color: blue;
         }
         
         .build.failure > .build-definition, .work-group-title > span.failure {
             color: red;
         }
-
 
     .build-definition {
         font-size: large;
