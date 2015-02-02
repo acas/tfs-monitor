@@ -12,7 +12,7 @@ namespace TfsMonitor.Controllers
     public class BingBackgroundsController : ApiController
     {
 		public JObject Get() {
-			WebRequest request = WebRequest.Create("http://www.bing.com/HPImageArchive.aspx?format=js&idx=1&n=1&mkt=en-US");
+			WebRequest request = WebRequest.Create("http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US");
 			WebResponse response = request.GetResponse();
 			StreamReader sr = new StreamReader(response.GetResponseStream());
 			return JObject.Parse(sr.ReadToEnd());
