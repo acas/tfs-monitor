@@ -43,25 +43,25 @@
                  ng-class="{'active': buildMonitor.selectedGroup === undefined}">
                 <div class="group-title">All</div>
             </div>
-            <div ng-repeat="group in buildMonitor.groups" class="work-group" ng-click="buildMonitor.selectGroup(group.name)"
+            <div ng-repeat="group in buildMonitor.groups" class="group" ng-click="buildMonitor.selectGroup(group.name)"
                  ng-class="{'active': buildMonitor.selectedGroup === group.name, 'running': group.inProgressCount, 'failure': group.failureCount, 'success': !group.failureCount && !group.inProgressCount}">
-                <div class="work-group-title">
-                    {{group.name}}
-                    <span class="pull-right failure" ng-show="group.failureCount">
-                        <span class="glyphicon glyphicon-remove"></span>
-                    </span>
-                    <span class="pull-right running" ng-show="group.inProgressCount">
-                        <span class="glyphicon glyphicon-wrench"></span>
-                    </span>                    
+                <div class="group-title">
+                    {{group.name}}                 
+                    <div class="failure pull-right" ng-show="group.failureCount">
+                        <span class="glyphicon glyphicon-remove"></span><span class="group-title-details">{{group.failureCount}}</span>
+                    </div>
+                    <div class="running pull-right" ng-show="group.inProgressCount">
+                        <span class="glyphicon glyphicon-wrench"></span> <span class="group-title-details">{{group.inProgressCount}}</span>
+                    </div>
                     <!--don't show success unless there's nothing running or failed-->
-                    <span class="pull-right success" ng-show="!group.failureCount && !group.inProgressCount">
+                    <div class="success pull-right" ng-show="!group.failureCount && !group.inProgressCount">
                         <span class="glyphicon glyphicon-ok"></span>
-                    </span>
-
+                        <!--{{group.builds.length - group.failureCount - group.inProgressCount}} -->
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="work-table-column" ng-class="{'fill': !buildMonitor.options.groupByField}">
+        <div class="table-column" ng-class="{'fill': !buildMonitor.options.groupByField}">
             <div ng-repeat="group in buildMonitor.groups  | filter : {name: buildMonitor.selectedGroup}" class="group">
                 <div class="group-header" ng-show="!buildMonitor.selectedGroup">
                     {{group.name}}
@@ -109,16 +109,16 @@
             margin-right: 20px;
         }
 
-        div.work-table-column {
+        div.table-column {
             float: left;
             width: calc(100% - 225px - 20px - 5px);
         }
 
-            div.work-table-column.fill {
+            div.table-column.fill {
                 width: 100%;
             }
 
-            div.work-table-column > div {
+            div.table-column > div {
             }
     }
 
@@ -129,7 +129,7 @@
             margin-right: 20px;
         }
 
-        div.work-table-column {
+        div.table-column {
             width: 100%;
         }
 
@@ -137,7 +137,7 @@
             height: 90px;
         }
 
-        div.work-table-column > div {
+        div.table-column > div {
             display: inline-block;
         }
     }
@@ -152,7 +152,7 @@
         margin-top: 10px;
         cursor: pointer;
         font-size: 10pt;
-        width:100%;
+        width: 100%;
     }
 
         div.group-list-column > div.group.active,
@@ -160,18 +160,18 @@
             background-color: #cbd1d7;
         }
 
-        div.group > div.group-title {
-            font-size: 13pt;
-            font-weight: bold;
-        }
+    div.group > div.group-title {
+        font-size: 13pt;
+        font-weight: bold;
+    }
 
-        div.group > div > span.group-data {
-            font-size: 12pt;
-        }
+    div.group > div > span.group-data {
+        font-size: 12pt;
+    }
 
 
-    div.group-header {        
-        margin: 5px;        
+    div.group-header {
+        margin: 5px;
     }
 
     span.group-header {
@@ -206,30 +206,37 @@
         }
 
 
+        /*.group.success, .group.running  , .group.failure */
+
         /*the order here matters - red overrules blue, which overrules green*/
-        .build.success, .group.success {
+        .build.success {
             border-color: green !important;
         }
 
-        .build.running, .group.running {
+        .build.running {
             border-color: blue !important;
         }
 
-		.build.failure, .group.failure {
+        .build.failure {
             border-color: red !important;
         }
 
-        .build.success > .build-definition, .group-title > span.success {
+        .build.success > .build-definition, .group-title > .success {
             color: green;
         }
 
-        .build.running > .build-definition, .group-title > span.running {
+        .build.running > .build-definition, .group-title > .running {
             color: blue;
         }
-        
-        .build.failure > .build-definition, .work-group-title > span.failure {
+
+        .build.failure > .build-definition, .group-title > .failure {
             color: red;
         }
+
+    .group-title-details {
+        font-size: 9pt;
+        margin-left:-5px;        
+    }
 
     .build-definition {
         font-size: large;
