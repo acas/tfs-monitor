@@ -38,3 +38,22 @@ div.error {
 .collapseOptions-icon:hover {
 	opacity: .8;
 }
+
+.work-group {
+	background-color: rgba(255,255,255,0.85);
+}
+
+.work-group-table {
+	background-color: rgba(255,255,255,0.85);
+	border-radius: 3px;
+	padding: 3px;
+	margin-bottom: 6px;
+}
+
+.build {
+	background-color: rgba(255,255,255,0.95);
+}
+
+.table tbody {
+	background-color: #fff;
+}

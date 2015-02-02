@@ -177,6 +177,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\BingBackgroundsController.cs" />
     <Compile Include="Hubs\MonitorHub.cs" />
     <Compile Include="Hubs\WorkMonitorHub.cs" />
     <Compile Include="Hubs\BuildMonitorHub.cs" />

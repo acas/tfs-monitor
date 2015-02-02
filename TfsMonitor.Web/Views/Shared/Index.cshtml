@@ -1,45 +1,49 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta http-equiv="refresh" content="1200"> <!--refresh every 20 minutes - band-aid fix for hard to find bug-->
-    <title>TFS Monitor</title>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+	<meta http-equiv="refresh" content="1200"> <!--refresh every 20 minutes - band-aid fix for hard to find bug-->
+	<base href="@Request.Url.Scheme://@Request.Url.Authority@Href("~/")">
+	<title>TFS Monitor</title>
+	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.0-beta.13/angular.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.0-beta.13/angular.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap.min.js"></script>
 
-    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
-    <!--tfs monitor relies on acas-libraries, which you can download and serve locally or host somewhere-->
-    <script src="@System.Configuration.ConfigurationManager.AppSettings["acasLibrariesPath"]"></script>
+	<script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+	<!--tfs monitor relies on acas-libraries, which you can download and serve locally or host somewhere-->
+	<script src="@System.Configuration.ConfigurationManager.AppSettings["acasLibrariesPath"]"></script>
 
 
 
-    <script>
-        var tfsMonitor = angular.module('tfsMonitor', ['acas.angular', 'ui.router'])
-    </script>
+	<script>
+		var tfsMonitor = angular.module('tfsMonitor', ['acas.angular', 'ui.router'])
+	</script>
 
-    <script>
-        _.extend(tfsMonitor, { projectCollectionUrl : '@System.Configuration.ConfigurationManager.AppSettings["projectCollectionUrl"]' })
+	<script>
+	_.extend(tfsMonitor, {
+		projectCollectionUrl: '@System.Configuration.ConfigurationManager.AppSettings["projectCollectionUrl"]',
+		bingBackgrounds: '@System.Configuration.ConfigurationManager.AppSettings["bingBackgrounds"]',
+		isSsl: @(Request.Url.Scheme == "https" ? "true":"false")
+	})
 
-    </script>
+	</script>
 
-    @Scripts.Render("~/js")
-    <link rel="stylesheet" href="Views/Common/tfsMonitor.css"
-
+	@Scripts.Render("~/js")
+	<link rel="stylesheet" href="Views/Common/tfsMonitor.css">
 </head>
 <body>
-    <div ng-app="tfsMonitor">        
-        <div ui-view></div>                
-    </div>
+	<div ng-app="tfsMonitor">
+		<div ui-view></div>
+	</div>
 
-    <script src="//ajax.aspnetcdn.com/ajax/signalr/jquery.signalr-2.1.1.min.js"></script>
-    <script src="signalr/hubs"></script>
+	<script src="//ajax.aspnetcdn.com/ajax/signalr/jquery.signalr-2.1.1.min.js"></script>
+	<script src="signalr/hubs"></script>
 </body>
 </html>
