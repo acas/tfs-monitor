@@ -15,14 +15,13 @@
 				loadData: function (data) {
 					$scope.$apply(function () {
 						var grouped = utilities.group(utilities.sort(data))
-						var processed = utilities.process(grouped)
+						var processed = utilities.process(grouped)						
 						api.groups = processed
 					})
-				},
-
+				},				
 				initialize: function () {
 					_.extend(options, JSON.parse($window.localStorage.getItem("tfs-monitor.workMonitor.options")))
-					utilities.monitor.setLoadDataFn(utilities.loadData)
+					utilities.monitor.setMonitorFunctions({ loadData: utilities.loadData })
 					utilities.connect(true)
 					$scope.$on('$destroy', function () {
 						utilities.monitor.stop()
@@ -46,12 +45,15 @@
 					var result = []
 					for (var prop in object) {
 						var name = prop
-						if (options.groupByField === 'assignee' & !prop) {
+						if (options.groupByField === 'assignee' && !prop) {
 							name = 'Unassigned'
 						}
-						result.push({ name: name, group: object[prop] })
+						else if (options.groupByField === 'project') {
+							var dueDate = object[prop][0].dueDate							
+						}
+						result.push({ name: name, dueDate: dueDate, group: object[prop] })
 					}
-					result = _.sortBy(result, 'name')
+					result = _.sortBy(result, 'name')					
 					return result
 				},
 
@@ -61,6 +63,7 @@
 						processed.push({
 							name: data[group].name,
 							data: data[group].group,
+							dueDate: data[group].dueDate,
 							count: data[group].group.length,
 							workRemaining: _.reduce(data[group].group, function (memo, item) { return memo += (item.workRemaining.development || 0) + (item.workRemaining.testing || 0) }, 0)
 						})

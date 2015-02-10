@@ -55,7 +55,7 @@ namespace TfsMonitor.Web.Hubs
 
 		public override void Broadcast(object data)
 		{
-			Clients.All.sendData(data);
+			Clients.All.loadData(data);
 		}
 	
 	}

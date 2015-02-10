@@ -124,7 +124,8 @@ namespace TfsMonitor.Api.Work
 				Dictionary<string, string> parameters = new Dictionary<string, string>();
 
 				parameters.Add("Project", project.Name);
-				string iterationPath = currentIterations.Where(i => i.Project == project.Name).SingleOrDefault().Path;
+				Iteration iteration = currentIterations.Where(i => i.Project == project.Name).SingleOrDefault();
+				string iterationPath = iteration.Path;
 				if (iterationPath != null)
 				{
 					parameters.Add("IterationPath", iterationPath);
@@ -173,6 +174,7 @@ namespace TfsMonitor.Api.Work
 							WorkItemID = workItem.Id,
 							State = workItem.State,
 							Assignee = workItem.Fields["Assigned To"].Value.ToString(),
+							DueDate = iteration.EndDate,
 							WorkRemaining = workRemaining
 						});
 
