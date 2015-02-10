@@ -1,12 +1,15 @@
 TFS Monitor
 ===========
 
-TFS Monitor monitors builds (continuous integration and manual), work items and sprints. Useful both for developers' desktops and the big screen in the hallway or central location. It is rough around the edges, and the work monitor doesn't function yet, but the build monitor should work. Mostly, anyway.
+TFS Monitor monitors builds (continuous integration and manual), work items and sprints. Useful both for developers' desktops and the big screen in the hallway or central location. It is rough around the edges, not everything works and the code is a mess. But we use it and it works...most of the time.
 
-Tested on TFS 2013 with latest patches and updates. YMMV.
+Tested on the following system, YMMV:
+* TFS 2013
+* Windows Server/IIS
+* Chrome
 
 TFS Monitor's chief benefits over Microsoft's Team Web Access solution are:
-* TFS Monitor auto refreshes when changes are made to the underlying data. This makes it ideal for unattended use on a large, public monitor
+* TFS Monitor uses SignalR to refresh when changes are made to the underlying data. This makes it ideal for unattended use on a large, public monitor
 * TFS Monitor provides views that span multiple projects. For whatever reason, TFS considers each project its own siloed universe. For teams that juggle multiple projects
  at once, TFS Monitor gives developers and others a way to quickly see the status of all their projects in one place.
 * TFS Monitor provides a clean, clutter-free view of the status of your builds/sprints, making it ideal for an unattended large monitor.
@@ -22,6 +25,8 @@ When cloning the repository, you will need to add a file next to the `Web.config
 Optionally, you can add:
 * `projectRegex` - a Regular Expression that will limit which projects are considered for work item queries and build definitions
 * `buildDefinitionRegex` - a Regular Expression that will limit which build definitions are included (in addition to the limit the `projectRegex` performs)
+* `bingBackgrounds` - if `true`, TFS Monitor will use the Bing background image of the day as the background of the monitor, 
+making your TFS Monitor a part of your office's decor
 
 For example:
 
