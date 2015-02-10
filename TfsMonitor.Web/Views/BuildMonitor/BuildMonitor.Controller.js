@@ -104,7 +104,7 @@ tfsMonitor.controller('build-monitor-controller', ['$http', '$scope', '$window',
 				},
 
 				initialize: function () {
-					utilities.monitor.setLoadDataFn(utilities.loadData)
+					utilities.monitor.setMonitorFunctions({ loadData: utilities.loadData })
 					utilities.connect(true)
 					$scope.$on('$destroy', function () {
 						utilities.monitor.stop()

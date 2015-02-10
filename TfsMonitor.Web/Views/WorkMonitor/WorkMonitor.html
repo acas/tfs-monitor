@@ -27,59 +27,63 @@
     </div>
     <div align="center" class="collapseOptions-icon" ng-click="workMonitor.toggleCollapseOptions()"><span class="glyphicon" ng-class="workMonitor.options.collapseOptions ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span></div>
     <div class="container-fluid">
-        
-            <div class="work-group-list-column" ng-show="workMonitor.options.groupByField">
-                <div class="work-group" ng-click="workMonitor.selectedGroup = undefined"
-                     ng-class="{'active': workMonitor.selectedGroup === undefined}">
-                    <div class="work-group-title">All</div>
-                </div>
-                <div ng-repeat="group in workMonitor.groups" class="work-group" ng-click="workMonitor.selectGroup(group.name)"
-                     ng-class="{'active': workMonitor.selectedGroup === group.name}">
-                    <div class="work-group-title">{{group.name}}</div>
-                    <div><span class="work-group-data">{{group.data.length}}</span> items outstanding</div>
-                    <div><span class="work-group-data">{{group.workRemaining | acFormatNumber: {minPrecision: 0, maxPrecision: 2} }}</span> hours</div>
-                </div>
+
+        <div class="work-group-list-column" ng-show="workMonitor.options.groupByField">
+            <div class="work-group" ng-click="workMonitor.selectedGroup = undefined"
+                 ng-class="{'active': workMonitor.selectedGroup === undefined}">
+                <div class="work-group-title">All</div>
             </div>
-            <div class="work-table-column" ng-class="{'fill': !workMonitor.options.groupByField}">
-                <div>
-                    <div ng-repeat="group in workMonitor.groups | filter : {name: workMonitor.selectedGroup}" class="work-group-table">                        
-                        <div class="row work-group-header tm-clickable " ng-click="workMonitor.groupCollapse[group.name] = !workMonitor.groupCollapse[group.name]">
-                            <span class="pull-left work-group-header">{{group.name}}</span>
-                            <span class="pull-right">
-                                {{group.data.length}} item<span ng-show="group.data.length !== 1">s</span> outstanding
-                                - {{group.workRemaining |  acFormatNumber : {minPrecision: 0, maxPrecision: 2} }} hours
-                            </span>
-                        </div>
-                        <div collapse="workMonitor.groupCollapse[group.name]">
-                            <table class="table table-condensed table-striped">
-                                <thead>
-                                    <tr>
-                                        <th style="width:25px;"></th>
-                                        <th style="width:70px;" ng-click="workMonitor.sortBy('workItemID')" class="tm-clickable">ID</th>
-                                        <th style="width:130px;" ng-click="workMonitor.sortBy('project')" class="tm-clickable" ng-show="workMonitor.options.groupByField !== 'project'">Project</th>
-                                        <th style="width:250px;" ng-click="workMonitor.sortBy('assignee')" class="tm-clickable" ng-show="workMonitor.options.groupByField !== 'assignee'">Assigned To</th>
-                                        <th style="width:120px;" ng-click="workMonitor.sortBy('state')" class="tm-clickable" ng-show="workMonitor.options.groupByField !== 'state'">State</th>
-                                        <th>Title</th>
-                                        <th style="text-align:right;padding-right:10px;">Hours</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="item in group.data" ng-click="workMonitor.openWorkItem(item)" class="tm-clickable work-workitem">
-                                        <td title="{{item.type}}"><span class="work-workitem-type-icon" ng-class="item.type === 'Bug' ? 'bug': 'pbi'"></span></td>
-                                        <td>{{item.workItemID}}</td>
-                                        <td ng-show="workMonitor.options.groupByField !== 'project'">{{item.project}}</td>
-                                        <td ng-show="workMonitor.options.groupByField !== 'assignee'">{{item.assignee}}</td>
-                                        <td ng-show="workMonitor.options.groupByField !== 'state'">{{item.state}}</td>
-                                        <td>{{item.title}}</td>
-                                        <td style="text-align:right;padding-right:10px;">{{(item.workRemaining.development +  item.workRemaining.testing) | tmZeroToNull : acFormatNumber : {minPrecision: 0, maxPrecision: 2} }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+            <div ng-repeat="group in workMonitor.groups" class="work-group" ng-click="workMonitor.selectGroup(group.name)"
+                 ng-class="{'active': workMonitor.selectedGroup === group.name}">
+                <div class="work-group-title">{{group.name}}</div>
+                <div><span class="work-group-data">{{group.data.length}}</span> items outstanding</div>
+                <div><span class="work-group-data">{{group.workRemaining | acFormatNumber: {minPrecision: 0, maxPrecision: 2} }}</span> hours</div>
+                <div ng-show="workMonitor.options.groupByField === 'project'">Ends <span class="work-group-data">{{group.dueDate | acFormatDate}}</span></div>
+            </div>
+        </div>
+        <div class="work-table-column" ng-class="{'fill': !workMonitor.options.groupByField}">
+            <div>
+                <div ng-repeat="group in workMonitor.groups | filter : {name: workMonitor.selectedGroup}" class="work-group-table">
+                    <div class="row work-group-header tm-clickable " ng-click="workMonitor.groupCollapse[group.name] = !workMonitor.groupCollapse[group.name]">
+                        <span class="pull-left work-group-header">{{group.name}}</span>                        
+                        <span class="pull-right">
+                            {{group.data.length}} item<span ng-show="group.data.length !== 1">s</span>
+                            - {{group.workRemaining |  acFormatNumber : {minPrecision: 0, maxPrecision: 2} }} hours
+                            <span ng-show="workMonitor.options.groupByField === 'project'">- Ends {{group.dueDate | acFormatDate}} </span> 
+                        </span>
+                    </div>
+                    <div collapse="workMonitor.groupCollapse[group.name]">
+                        <table class="table table-condensed table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width:25px;"></th>
+                                    <th style="width:70px;" ng-click="workMonitor.sortBy('workItemID')" class="tm-clickable">ID</th>
+                                    <th style="width:130px;" ng-click="workMonitor.sortBy('project')" class="tm-clickable" ng-show="workMonitor.options.groupByField !== 'project'">Project</th>
+                                    <th style="width:250px;" ng-click="workMonitor.sortBy('assignee')" class="tm-clickable" ng-show="workMonitor.options.groupByField !== 'assignee'">Assigned To</th>
+                                    <th style="width:120px;" ng-click="workMonitor.sortBy('state')" class="tm-clickable" ng-show="workMonitor.options.groupByField !== 'state'">State</th>
+                                    <th>Title</th>
+                                    <th style="width:120px;" ng-click="workMonitor.sortBy('dueDate')" class="tm-clickable" ng-show="workMonitor.options.groupByField !== 'project'">Due Date</th>
+                                    <th style="text-align:right;padding-right:10px;">Hours</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in group.data" ng-click="workMonitor.openWorkItem(item)" class="tm-clickable work-workitem">
+                                    <td title="{{item.type}}"><span class="work-workitem-type-icon" ng-class="item.type === 'Bug' ? 'bug': 'pbi'"></span></td>
+                                    <td>{{item.workItemID}}</td>
+                                    <td ng-show="workMonitor.options.groupByField !== 'project'">{{item.project}}</td>
+                                    <td ng-show="workMonitor.options.groupByField !== 'assignee'">{{item.assignee}}</td>
+                                    <td ng-show="workMonitor.options.groupByField !== 'state'">{{item.state}}</td>
+                                    <td>{{item.title}}</td>
+                                    <td ng-show="workMonitor.options.groupByField !== 'project'">{{item.dueDate | acFormatDate}}</td>
+                                    <td style="text-align:right;padding-right:10px;">{{(item.workRemaining.development +  item.workRemaining.testing) | tmZeroToNull : acFormatNumber : {minPrecision: 0, maxPrecision: 2} }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        
+        </div>
+
     </div>
 </div>
 <style>
@@ -130,8 +134,7 @@
         -webkit-border-radius: 4px;
         border-radius: 4px;
         padding: 10px;
-        margin-bottom: 10px;
-        margin-top: 10px;
+        margin-bottom: 10px;        
         cursor: pointer;
         font-size: 10pt;
     }

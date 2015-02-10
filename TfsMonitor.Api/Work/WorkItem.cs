@@ -16,6 +16,10 @@ namespace TfsMonitor.Api.Work
 		public string Title { get; set; }
 		public string Assignee { get; set; }
 		public string State { get; set; }
+		/// <summary>
+		/// DueDate represents the end of the sprint this work item is in
+		/// </summary>
+		public DateTime DueDate { get; set; }
 		public Dictionary<Activity, double> WorkRemaining { get; set; }
 
 		public WorkItem()

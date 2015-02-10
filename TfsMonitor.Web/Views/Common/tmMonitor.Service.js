@@ -1,9 +1,9 @@
 ﻿tfsMonitor.factory('tmMonitor', ['$timeout', function ($timeout) {
-	return function (hubName, scope, loadDataFn) {
+	return function (hubName, scope, monitorFunctions) {
 		return new function () {
 			
 			var utilities = {
-				loadDataFn: loadDataFn,
+				monitorFunctions: monitorFunctions,
 				scope: scope,
 				setConnectionState: function (connected, connecting, serverError) {
 					$timeout(function () {
@@ -21,9 +21,10 @@
 					jQuery(function () {
 						var hub = jQuery.connection[hubName]
 						utilities.hub = hub
-						hub.client.sendData = function (data) {
-							utilities.loadDataFn(data)
+						for (var func in utilities.monitorFunctions) {
+							hub.client[func] = utilities.monitorFunctions[func]
 						}
+						
 						hub.client.notifyError = function (ex) {
 							//if we're getting a server error, we must be connected
 							utilities.setConnectionState(true, false, true)
@@ -64,8 +65,8 @@
 				serverError: false,
 				connecting: false,
 				connected: true, //start off connected so that the user doesn't see an error before the initial connection is attempted	
-				setLoadDataFn: function(loadDataFn){
-					utilities.loadDataFn = loadDataFn
+				setMonitorFunctions: function(monitorFunctions){
+					utilities.monitorFunctions = monitorFunctions
 				}
 			}
 			return api
