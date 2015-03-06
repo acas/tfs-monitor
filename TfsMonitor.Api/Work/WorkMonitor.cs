@@ -175,6 +175,7 @@ namespace TfsMonitor.Api.Work
 							State = workItem.State,
 							Assignee = workItem.Fields["Assigned To"].Value.ToString(),
 							DueDate = iteration.EndDate,
+							Iteration = iterationPath.Split(' ', '\\').Last(), //the last word or last component in path
 							WorkRemaining = workRemaining
 						});
 
