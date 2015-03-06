@@ -1,13 +1,14 @@
 ﻿<div ng-controller="home-controller">
 	<style type="text/css" ng-if="home.backgroundImage">
 		body {
-			background: url({{home.backgroundImage}}) no-repeat center center fixed; 
+			background: url({{home.backgroundImage}}) no-repeat center center fixed;
 			-webkit-background-size: cover;
 			-moz-background-size: cover;
 			-o-background-size: cover;
 			background-size: cover;
 		}
 	</style>
+	<video ng-show="home.backgroundVideo" id="backgroundVideo" class="home-video" loop="true" autobuffer="" preload="auto" autoplay="autoplay"></video>
 	<div class="home-module-strip" ng-show="false">
 		<!--has to be styled before it can be shown-->
 		<a ui-sref="home.build" class="home-module">Builds</a>
@@ -17,19 +18,28 @@
 </div>
 
 <style>
-    .home-module-strip {
-        margin: 15px;
-    }
+	.home-module-strip {
+		margin: 15px;
+	}
 
-    .home-module {
-        border: 1px solid gray;
-        padding: 4px;
-        border-radius: 2px;
-        text-decoration: none;
-    }
+	.home-video {
+		position: fixed; right: 0; bottom: 0;
+		min-width: 100%; min-height: 100%;
+		width: auto; height: auto; z-index: -100;
+		/*background: url(polina.jpg) no-repeat;*/
+		background-size: cover;
+	}
 
-        .home-module:hover {
-            background-color: #88bdd1;
-            text-decoration: none;
-        }
+	.home-module {
+		border: 1px solid gray;
+		padding: 4px;
+		border-radius: 2px;
+		text-decoration: none;
+		z-index: 100;
+	}
+
+	.home-module:hover {
+		background-color: #88bdd1;
+		text-decoration: none;
+	}
 </style>
