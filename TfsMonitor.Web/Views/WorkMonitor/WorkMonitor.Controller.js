@@ -49,9 +49,10 @@
 							name = 'Unassigned'
 						}
 						else if (options.groupByField === 'project') {
-							var dueDate = object[prop][0].dueDate							
+							var dueDate = object[prop][0].dueDate
+							var iteration = object[prop][0].iteration
 						}
-						result.push({ name: name, dueDate: dueDate, group: object[prop] })
+						result.push({ name: name, dueDate: dueDate, iteration: iteration, group: object[prop] })
 					}
 					result = _.sortBy(result, 'name')					
 					return result
@@ -64,6 +65,7 @@
 							name: data[group].name,
 							data: data[group].group,
 							dueDate: data[group].dueDate,
+							iteration: data[group].iteration,
 							count: data[group].group.length,
 							workRemaining: _.reduce(data[group].group, function (memo, item) { return memo += (item.workRemaining.development || 0) + (item.workRemaining.testing || 0) }, 0)
 						})

@@ -35,7 +35,7 @@
             </div>
             <div ng-repeat="group in workMonitor.groups" class="work-group" ng-click="workMonitor.selectGroup(group.name)"
                  ng-class="{'active': workMonitor.selectedGroup === group.name}">
-                <div class="work-group-title">{{group.name}}</div>
+                <div class="work-group-title">{{group.name}} {{group.iteration}}</div>
                 <div><span class="work-group-data">{{group.data.length}}</span> items outstanding</div>
                 <div><span class="work-group-data">{{group.workRemaining | acFormatNumber: {minPrecision: 0, maxPrecision: 2} }}</span> hours</div>
                 <div ng-show="workMonitor.options.groupByField === 'project'">Ends <span class="work-group-data">{{group.dueDate | acFormatDate}}</span></div>
@@ -45,11 +45,11 @@
             <div>
                 <div ng-repeat="group in workMonitor.groups | filter : {name: workMonitor.selectedGroup}" class="work-group-table">
                     <div class="row work-group-header tm-clickable " ng-click="workMonitor.groupCollapse[group.name] = !workMonitor.groupCollapse[group.name]">
-                        <span class="pull-left work-group-header">{{group.name}}</span>                        
+                        <span class="pull-left work-group-header">{{group.name}} {{group.iteration}}</span>                        
                         <span class="pull-right">
                             {{group.data.length}} item<span ng-show="group.data.length !== 1">s</span>
                             - {{group.workRemaining |  acFormatNumber : {minPrecision: 0, maxPrecision: 2} }} hours
-                            <span ng-show="workMonitor.options.groupByField === 'project'">- Ends {{group.dueDate | acFormatDate}} </span> 
+                            <span ng-show="workMonitor.options.groupByField === 'project'"> - Ends {{group.dueDate | acFormatDate}} </span> 
                         </span>
                     </div>
                     <div collapse="workMonitor.groupCollapse[group.name]">
