@@ -27,9 +27,9 @@ namespace TfsMonitor.Controllers
 			result.imageUrl = data.Value<JArray>("images")[0].Value<string>("url");
 			result.copyright = data.Value<JArray>("images")[0].Value<string>("copyright");
 
-			int videoTagStart = bingHtml.IndexOf("<video", StringComparison.InvariantCultureIgnoreCase);
-			if(videoTagStart > 0) {
-				int videoSourceStart = bingHtml.IndexOf("g_vid =", videoTagStart, StringComparison.InvariantCultureIgnoreCase) + 7;
+			int videoSourceStart = bingHtml.IndexOf("g_vid =", StringComparison.InvariantCultureIgnoreCase);
+			if(videoSourceStart > 0) {
+				videoSourceStart += 7;
 				result.video = JArray.Parse(bingHtml.Substring(videoSourceStart, bingHtml.IndexOf("]];", videoSourceStart) - videoSourceStart + 2));
 			}
 
