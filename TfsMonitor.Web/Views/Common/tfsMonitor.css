@@ -6,12 +6,13 @@
 #footer {
 	width:100%;
 	height:26px;
-	position:absolute;
+	position:fixed;
 	bottom:0;
 	left:0;
 	padding:3px;
 	color: rgba(255,255,255,0.8);
 	background-color: rgba(90,90,90,0.5);
+	z-index: 10;
 }
 
 a, .tm-clickable {
@@ -39,6 +40,7 @@ div.error {
 .main-section {
 	padding: 50px;
 	padding-top: 20px;
+	z-index: 100;
 }
 
 .collapseOptions-icon {

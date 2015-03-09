@@ -9,12 +9,14 @@
 		}
 	</style>
 	<video ng-show="home.backgroundVideo" id="backgroundVideo" class="home-video" loop="true" autobuffer="" preload="auto" autoplay="autoplay"></video>
-	<div class="home-module-strip" ng-show="false">
-		<!--has to be styled before it can be shown-->
-		<a ui-sref="home.build" class="home-module">Builds</a>
-		<a ui-sref="home.work" class="home-module">Work</a>
+	<div class="home-content">
+		<div class="home-module-strip" ng-show="false">
+			<!--has to be styled before it can be shown-->
+			<a ui-sref="home.build" class="home-module">Builds</a>
+			<a ui-sref="home.work" class="home-module">Work</a>
+		</div>
+		<div ui-view></div>
 	</div>
-	<div ui-view></div>
 	<div id="footer">{{home.backgroundCopyright}}</div>
 </div>
 
@@ -42,5 +44,9 @@
 	.home-module:hover {
 		background-color: #88bdd1;
 		text-decoration: none;
+	}
+
+	.home-content * {
+		z-index: 100;
 	}
 </style>
