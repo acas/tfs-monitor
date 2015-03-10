@@ -86,7 +86,7 @@
                                 Started: {{build.startTime | acFormatDateTime}} ({{build.runningTime | tmTimeSpan }})
                             </div>
                         </div>
-                        <div>
+                        <div class="build-username">
                             {{build.username | acFormatUsername}}
                         </div>
 
@@ -95,13 +95,38 @@
             </div>
 
 
-        </div>
-
+        </div>      
     </div>
 
 </div>
 
 <style>
+    @media all and (max-width: 400px) {
+        div.options .pull-right {
+            float:left !important;
+        }
+        div.group-list-column{
+            display:none;
+        }
+        div.table-column {
+           
+        }
+        div.group{
+            display:initial !important;
+        }
+        div.build-block{
+             float:none;
+        }
+        div.build{
+            margin:0;
+            width:100%;
+            border-bottom:none;
+            border-radius:0;
+        }
+        div.build-username{
+            display:none;
+        }
+    }
     @media all and (min-width: 1200px) {
         div.group-list-column {
             float: left;
