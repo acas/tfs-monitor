@@ -118,73 +118,87 @@ namespace TfsMonitor.Api.Work
 			List<WorkItem> result = new List<WorkItem>();
 			foreach (Project project in workItemStore.Projects.Cast<Project>().Where(p => !ProjectRegexExists || ProjectRegex.IsMatch(p.Name)))
 			{
-				FindCurrentIteration(css, project.Uri.ToString(), currentIterations);
-
-
-				Dictionary<string, string> parameters = new Dictionary<string, string>();
-
-				parameters.Add("Project", project.Name);
-				Iteration iteration = currentIterations.Where(i => i.Project == project.Name).SingleOrDefault();
-				string iterationPath = iteration.Path;
-				if (iterationPath != null)
+				try
 				{
-					parameters.Add("IterationPath", iterationPath);
+					FindCurrentIteration(css, project.Uri.ToString(), currentIterations);
 
-					WorkItemCollection queryResults = workItemStore.Query(
-					   @"Select Id, Title, System.TeamProject, State, [Assigned To]
+					Dictionary<string, string> parameters = new Dictionary<string, string>();
+
+					parameters.Add("Project", project.Name);
+					Iteration iteration = currentIterations.Where(i => i.Project == project.Name).SingleOrDefault();
+					string iterationPath = iteration.Path;
+					if (iterationPath != null)
+					{
+						parameters.Add("IterationPath", iterationPath);
+
+						WorkItemCollection queryResults = workItemStore.Query(
+						   @"Select Id, Title, System.TeamProject, State, [Assigned To]
 						From WorkItems 
 						Where 
 						[Work Item Type] in ('Bug' , 'Product Backlog Item') 
 						and State <> 'Done' and State <> 'Closed' and State <> 'Removed'
 						and System.TeamProject = @Project and System.IterationPath = @IterationPath",
-							parameters
-					   );
+								parameters
+						   );
 
-					foreach (Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem workItem in queryResults)
-					{
-						//TODO this is really slow. ALl the queries should be combined into one, with dataprocessing on the
-						//performed here to figure all this stuff out
-						Dictionary<Activity, double> workRemaining = new Dictionary<Activity, double>();
-						foreach (WorkItemLink link in workItem.WorkItemLinks)
+						foreach (Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem workItem in queryResults)
 						{
-							if (link.LinkTypeEnd.Name == "Child")
+							//TODO this is really slow. ALl the queries should be combined into one, with dataprocessing on the
+							//performed here to figure all this stuff out
+							Dictionary<Activity, double> workRemaining = new Dictionary<Activity, double>();
+							foreach (WorkItemLink link in workItem.WorkItemLinks)
 							{
-								var item = workItemStore.GetWorkItem(link.TargetId);
-								var value = item.Fields["Remaining Work"].Value;
-								if (value != null)
+								if (link.LinkTypeEnd.Name == "Child")
 								{
-									//if activity is empty, set to None
-									Activity activity = Activity.None;
-									Enum.TryParse<Activity>(item.Fields["Activity"].Value.ToString(), true, out activity);
-
-									if (!workRemaining.ContainsKey(activity))
+									var item = workItemStore.GetWorkItem(link.TargetId);
+									var value = item.Fields["Remaining Work"].Value;
+									if (value != null)
 									{
-										workRemaining.Add(activity, 0);
-									}
-									workRemaining[activity] += double.Parse(value.ToString());
-								}
+										//if activity is empty, set to None
+										Activity activity = Activity.None;
+										Enum.TryParse<Activity>(item.Fields["Activity"].Value.ToString(), true, out activity);
 
+										if (!workRemaining.ContainsKey(activity))
+										{
+											workRemaining.Add(activity, 0);
+										}
+										workRemaining[activity] += double.Parse(value.ToString());
+									}
+
+								}
 							}
+							result.Add(new WorkItem()
+							{
+								Title = workItem.Title,
+								Type = workItem.Type.Name,
+								Project = workItem.Project.Name,
+								WorkItemID = workItem.Id,
+								State = workItem.State,
+								Assignee = workItem.Fields["Assigned To"].Value.ToString(),
+								DueDate = iteration.EndDate,
+								Iteration = iterationPath.Split(' ', '\\').Last(), //the last word or last component in path
+								WorkRemaining = workRemaining
+							});
+
+
 						}
-						result.Add(new WorkItem()
-						{
-							Title = workItem.Title,
-							Type = workItem.Type.Name,
-							Project = workItem.Project.Name,
-							WorkItemID = workItem.Id,
-							State = workItem.State,
-							Assignee = workItem.Fields["Assigned To"].Value.ToString(),
-							DueDate = iteration.EndDate,
-							Iteration = iterationPath.Split(' ', '\\').Last(), //the last word or last component in path
-							WorkRemaining = workRemaining
-						});
 
 					}
+				}
+				catch (Exception ex)
+				{
+					//swallow security exceptions - if the current user doesn't have access to the requested project, just 
+					//don't show it. Continue to show other projects the user has access to.
+					if (!(ex is System.Security.SecurityException))
+					{
+						throw;
+					}
+
 				}
 			}
 
 			return result;
-		}
 
+		}
 	}
 }
