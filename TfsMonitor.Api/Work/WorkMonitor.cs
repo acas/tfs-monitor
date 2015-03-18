@@ -151,20 +151,21 @@ namespace TfsMonitor.Api.Work
 								if (link.LinkTypeEnd.Name == "Child")
 								{
 									var item = workItemStore.GetWorkItem(link.TargetId);
-									var value = item.Fields["Remaining Work"].Value;
-									if (value != null)
-									{
-										//if activity is empty, set to None
-										Activity activity = Activity.None;
-										Enum.TryParse<Activity>(item.Fields["Activity"].Value.ToString(), true, out activity);
-
-										if (!workRemaining.ContainsKey(activity))
+									if (item.Type.Name == "Task"){
+										var value = item.Fields["Remaining Work"].Value;
+										if (value != null)
 										{
-											workRemaining.Add(activity, 0);
-										}
-										workRemaining[activity] += double.Parse(value.ToString());
-									}
+											//if activity is empty, set to None
+											Activity activity = Activity.None;
+											Enum.TryParse<Activity>(item.Fields["Activity"].Value.ToString(), true, out activity);
 
+											if (!workRemaining.ContainsKey(activity))
+											{
+												workRemaining.Add(activity, 0);
+											}
+											workRemaining[activity] += double.Parse(value.ToString());
+										}
+									}									
 								}
 							}
 							result.Add(new WorkItem()
