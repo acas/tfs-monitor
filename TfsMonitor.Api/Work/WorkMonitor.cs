@@ -125,7 +125,15 @@ namespace TfsMonitor.Api.Work
 					Dictionary<string, string> parameters = new Dictionary<string, string>();
 
 					parameters.Add("Project", project.Name);
-					Iteration iteration = currentIterations.Where(i => i.Project == project.Name).SingleOrDefault();
+					Iteration iteration;
+					try
+					{
+						iteration = currentIterations.Where(i => i.Project == project.Name).SingleOrDefault();
+					}
+					catch (System.InvalidOperationException iox)
+					{
+						throw new Exception(string.Format("There cannot be more than one current iteration on the {0} project.", project.Name), iox);
+					}
 					string iterationPath = iteration.Path;
 					if (iterationPath != null)
 					{
@@ -151,7 +159,8 @@ namespace TfsMonitor.Api.Work
 								if (link.LinkTypeEnd.Name == "Child")
 								{
 									var item = workItemStore.GetWorkItem(link.TargetId);
-									if (item.Type.Name == "Task"){
+									if (item.Type.Name == "Task")
+									{
 										var value = item.Fields["Remaining Work"].Value;
 										if (value != null)
 										{
@@ -165,7 +174,7 @@ namespace TfsMonitor.Api.Work
 											}
 											workRemaining[activity] += double.Parse(value.ToString());
 										}
-									}									
+									}
 								}
 							}
 							result.Add(new WorkItem()
