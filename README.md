@@ -27,6 +27,8 @@ Optionally, you can add:
 * `buildDefinitionRegex` - a Regular Expression that will limit which build definitions are included (in addition to the limit the `projectRegex` performs)
 * `bingBackgrounds` - if `true`, TFS Monitor will use the Bing background image of the day as the background of the monitor, 
 making your TFS Monitor a part of your office's decor
+* `BuildMonitorRefreshIntervalMS` - interval in milliseconds to check for build updates; default is 10000
+* `WorkMonitorRefreshIntervalMS` - interval in milliseconds to check for work item updates; default is 10000
 
 For example:
 
@@ -35,6 +37,8 @@ For example:
           <add key="projectCollectionUrl" value="https://mytfssite.com/MyProjectCollection" />	
           <add key="acasLibrariesPath"    value="//cdn.mysite.com/acas-libraries.js" />	
           <add key="projectRegex"    value="MyProject" />	
+          <add key="BuildMonitorRefreshIntervalMS" value="3000"/>
+          <add key="WorkMonitorRefreshIntervalMS" value="10000"/>
       </appSettings>
 ```
 
