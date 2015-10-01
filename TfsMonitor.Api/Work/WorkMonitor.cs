@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,15 +10,15 @@ using Microsoft.TeamFoundation.Build.Client;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.Server;
-using System.Collections;
 using Microsoft.TeamFoundation;
 
 
 namespace TfsMonitor.Api.Work
 {
-	public class WorkMonitor : Monitor
+	public class WorkMonitor : Monitor<List<WorkItem>>
 	{
 		private WorkItemStore workItemStore;
+		private List<WorkItem> lastCheck = new List<WorkItem>();
 
 		private struct Iteration
 		{
@@ -29,6 +31,11 @@ namespace TfsMonitor.Api.Work
 		public WorkMonitor()
 		{
 			workItemStore = (WorkItemStore)TeamProjectCollection.GetService(typeof(WorkItemStore));
+
+			int configMonitorRefreshIntervalMS;
+			if(int.TryParse(ConfigurationManager.AppSettings["WorkMonitorRefreshIntervalMS"], out configMonitorRefreshIntervalMS)) {
+				MonitorRefreshIntervalMS = configMonitorRefreshIntervalMS;
+			}
 		}
 
 		private void FindCurrentIteration(ICommonStructureService4 css, string projectUri, List<Iteration> result)
@@ -209,6 +216,25 @@ namespace TfsMonitor.Api.Work
 
 			return result;
 
+		}
+
+		protected override void MonitorAction() {
+			try {
+				List<WorkItem> current = GetWorkItems();
+				if(!Enumerable.SequenceEqual(lastCheck, current)) {
+					lastCheck = current;
+					NotifyAll(current);
+				}
+			}
+			catch(Exception ex) {
+				NotifyError(ex);
+				lastCheck = new List<WorkItem>(); //reset the lastCheck so that next time around, it'll try to broadcast if no errors are shown. This will clear the error 
+				//message on the client
+			}
+		}
+
+		public List<WorkItem> GetLast() {
+			return lastCheck;
 		}
 	}
 }

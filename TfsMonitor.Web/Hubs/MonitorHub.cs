@@ -8,45 +8,19 @@ using TfsMonitor.Api.Build;
 using System.Linq;
 namespace TfsMonitor.Web.Hubs
 {
-	public abstract class MonitorHub : Hub
+	public abstract class MonitorHub<T> : Hub
 	{
-		protected TfsMonitor.Api.Monitor monitor;
-		protected static int connections = 0;
-		private Thread thread;
-
-		public MonitorHub()
-		{
-			thread = new Thread(() => Start(monitor));
-		}
-
-		public override Task OnConnected()
-		{
-			connections++;
-			if (connections == 1)
-			{
-				thread.Start();
-			}
+		public override Task OnConnected() {
 			return base.OnConnected();
 		}
 
-		public override Task OnDisconnected(bool stopCalled)
-		{
-			if (connections > 0) //for some reason it was going negative at times
-			{
-				connections--;
-			}
-			
-			
-			
+		public override Task OnDisconnected(bool stopCalled) {
 			return base.OnDisconnected(stopCalled);
 		}
 
-		public abstract void Start(TfsMonitor.Api.Monitor monitor);
+		public abstract void Broadcast(T data);
 
-		public abstract void Broadcast(object data);
-
-		public void NotifyError(Exception ex)
-		{
+		public void NotifyError(Exception ex) {
 			Clients.All.notifyError(ex);
 		}
 	}

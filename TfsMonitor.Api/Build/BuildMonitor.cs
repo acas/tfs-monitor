@@ -3,36 +3,57 @@ using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Threading;
 
 
 namespace TfsMonitor.Api.Build
 {
-	public class BuildMonitor:Monitor
+	public class BuildMonitor : Monitor<List<Build>>
 	{		
-		
-		private List<Build> BuildStatuses;
-		
+		private List<Build> buildStatuses;
+		private List<Build> lastCheck = new List<Build>();
+
 		private System.Text.RegularExpressions.Regex DefinitionRegex;		
 		private bool DefinitionRegexExists;
 
 		private IBuildServer BuildServer;
 
-		public BuildMonitor()
+		public BuildMonitor() : base()
 		{
-			BuildStatuses = new List<Build>();
+			buildStatuses = new List<Build>();
 
 			
 			DefinitionRegex = new System.Text.RegularExpressions.Regex("");
 			string definitionRegexExpression = System.Configuration.ConfigurationManager.AppSettings["buildDefinitionRegex"];
 			DefinitionRegexExists = definitionRegexExpression != null;
-			if (DefinitionRegexExists)
-			{
+			if (DefinitionRegexExists) {
 				DefinitionRegex = new System.Text.RegularExpressions.Regex(definitionRegexExpression);
 			}
 			
 			BuildServer = (IBuildServer)TeamProjectCollection.GetService(typeof(IBuildServer));
-			
+
+			int configMonitorRefreshIntervalMS;
+			if(int.TryParse(ConfigurationManager.AppSettings["BuildMonitorRefreshIntervalMS"], out configMonitorRefreshIntervalMS)) {
+				MonitorRefreshIntervalMS = configMonitorRefreshIntervalMS;
+			}
+		}
+
+		protected override void MonitorAction() {
+			try {
+				List<Build> current = GetBuildStatuses();
+				if(!Enumerable.SequenceEqual(lastCheck, current)) {
+					lastCheck = current;
+					NotifyAll(current);
+				}
+			}
+			catch (Exception ex)
+			{
+				NotifyError(ex);
+				lastCheck = new List<Build>(); //reset the lastCheck so that next time around, it'll try to broadcast if no errors are shown. This will clear the error 
+				//message on the client
+			}
 		}
 
 		private void UpdateBuildStatus()
@@ -58,7 +79,7 @@ namespace TfsMonitor.Api.Build
 					if (builds.Builds.Length > 0)
 					{
 						IBuildDetail buildDetail = builds.Builds[0];
-						if (!BuildStatuses.Exists(x => x.Completed && x.BuildUri == buildDetail.Uri))
+						if (!buildStatuses.Exists(x => x.Completed && x.BuildUri == buildDetail.Uri))
 						{
 							newUris.Add(buildDetail.Uri);
 						}
@@ -72,7 +93,7 @@ namespace TfsMonitor.Api.Build
 
 				foreach (IBuildDetail buildDetail in builds)
 				{
-					BuildStatuses.Remove(BuildStatuses.Where(x => x.BuildDefinitionUri == buildDetail.BuildDefinitionUri).FirstOrDefault());
+					buildStatuses.Remove(buildStatuses.Where(x => x.BuildDefinitionUri == buildDetail.BuildDefinitionUri).FirstOrDefault());
 					Build build = new Build()
 					{
 						BuildUri = buildDetail.Uri,
@@ -86,7 +107,7 @@ namespace TfsMonitor.Api.Build
 						Username = buildDetail.RequestedBy
 
 					};
-					BuildStatuses.Add(build);
+					buildStatuses.Add(build);
 				}
 			}			
 		}
@@ -102,11 +123,13 @@ namespace TfsMonitor.Api.Build
 			UpdateBuildStatus();
 
 			List<Build> result = new List<Build>();
-			result.AddRange(BuildStatuses.Select(x => (Build)x.Clone()));		
+			result.AddRange(buildStatuses.Select(x => (Build)x.Clone()));		
 			//result must come back in the same order every time so that the client can compare previous to current easily				
 			return result.OrderBy(x => x.BuildDefinitionUri.ToString()).ToList();
 		}
 
-
+		public List<Build> GetLast() {
+			return lastCheck;
+		}
 	}
 }
