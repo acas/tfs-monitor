@@ -32,7 +32,7 @@ namespace TfsMonitor.Web.Hubs
 		}
 
 		public override void Broadcast(List<WorkItem> data) {
-			Clients.All.loadData(data);
+			Clients.Client(Context.ConnectionId).loadData(data);
 		}
 	}
 }

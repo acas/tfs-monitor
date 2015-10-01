@@ -31,7 +31,7 @@ namespace TfsMonitor.Web.Hubs
 		}
 
 		public override void Broadcast(List<Build> data) {
-			Clients.All.loadData(data);
+			Clients.Client(Context.ConnectionId).loadData(data);
 		}
 	}
 }
